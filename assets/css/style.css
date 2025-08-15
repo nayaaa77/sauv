@@ -1,0 +1,885 @@
+/*
+==============================================
+  GENERAL & FONT
+==============================================
+*/
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap');
+
+body {
+  font-family: 'Jost', sans-serif;
+  color: #111;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+/*
+==============================================
+  HEADER / NAVBAR
+==============================================
+*/
+.site-header {
+  padding: 20px 0;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand a {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-menu a {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-icons a {
+  font-size: 18px;
+}
+.header-user-link {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Atur jarak antara nama dan ikon */
+    text-decoration: none;
+    color: inherit;
+}
+
+/*
+==============================================
+  BUTTONS
+==============================================
+*/
+.btn {
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #555;
+}
+
+/*
+==============================================
+  HOMEPAGE STYLING
+==============================================
+*/
+.hero-banner-section {
+  position: relative;
+  width: 100%;
+  margin-bottom: 60px;
+}
+
+.hero-banner-link {
+  display: block;
+  position: relative;
+  color: white;
+  text-decoration: none;
+}
+
+.hero-banner-image {
+  width: 100%;
+  height: 50vh;
+  min-height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+.hero-banner-link:hover .hero-banner-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner-title {
+  font-size: 2.8rem;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.hero-banner-desc {
+  font-size: 1rem;
+  max-width: 550px;
+  margin: 15px 0 25px 0;
+  line-height: 1.5;
+}
+
+.hero-banner-cta {
+  padding: 12px 30px;
+  border: 2px solid white;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.hero-banner-link:hover .hero-banner-cta {
+  background: white;
+  color: black;
+}
+
+.latest-products-section {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 15px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.view-all-link {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.view-all-link:hover {
+  color: #000;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.product-card {
+  text-align: left;
+}
+
+.product-card a {
+  text-decoration: none;
+  color: #333;
+}
+
+.product-image-container {
+  background-color: #f7f7f7;
+  margin-bottom: 10px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1; 
+}
+
+.product-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain; 
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+.product-card h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 5px 0 3px 0;
+}
+
+.product-card .product-price {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.product-card .btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.product-card .btn:hover {
+  background-color: #333;
+  border-color: #333;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/*
+==============================================
+  PRODUCT DETAIL PAGE (UPDATED)
+==============================================
+*/
+.product-detail-layout {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.product-images {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+}
+
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thumbnail-item {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.thumbnail-item:hover,
+.thumbnail-item.active {
+  border-color: #333;
+}
+
+.main-image-container {
+  flex: 1;
+}
+
+#main-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-info {
+  flex: 1;
+  padding-left: 20px;
+}
+
+.product-info h1 {
+  font-size: 2.2rem;
+  font-weight: 500;
+  margin-top: 0;
+}
+
+.product-info .price {
+  font-size: 1.5rem;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.quantity-selector {
+  display: flex;
+  border: 1px solid #ccc;
+  width: fit-content;
+  margin-bottom: 20px;
+}
+
+.quantity-selector input[type="number"] {
+  width: 50px;
+  text-align: center;
+  border: none;
+  margin: 0;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+.quantity-selector input[type="number"]::-webkit-inner-spin-button,
+.quantity-selector input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-btn {
+  background: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #555;
+}
+
+.btn-add-to-cart {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  padding: 14px;
+  background-color: #111;
+  border: 1px solid #111;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-add-to-cart:hover {
+  background-color: #fff;
+  color: #111;
+}
+
+.product-tabs {
+  margin-top: 60px;
+  border-top: 1px solid #eee;
+  padding-top: 30px;
+}
+
+.product-tabs .tab-headers {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.product-tabs .tab-link {
+  text-decoration: none;
+  color: #888;
+  padding: 10px 0;
+  font-size: 1rem;
+  position: relative;
+  border-bottom: 2px solid transparent;
+}
+
+.product-tabs .tab-link.active {
+  color: #000;
+  font-weight: 500;
+  border-bottom-color: #000;
+}
+
+.product-tabs .tab-pane {
+  display: none;
+}
+
+.product-tabs .tab-pane.active {
+  display: block;
+  line-height: 1.6;
+  color: #555;
+}
+.stock-status {
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.low-stock {
+    color: #d9534f; /* Warna merah untuk stok sedikit */
+}
+
+.sold-out {
+    color: #777; /* Warna abu-abu untuk sold out */
+    font-weight: bold;
+}
+
+/* Mengubah tampilan tombol yang dinonaktifkan */
+.btn-add-to-cart:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+/* Style dasar untuk tombol detail */
+.btn-detail {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #ffffff;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+    border: 1px solid #222;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-detail:hover {
+    background-color: #ada9a9;
+    color: #0d0c0c;
+}
+
+/* --- Style untuk Produk Sold Out --- */
+
+/* Membuat wadah gambar menjadi 'relative' agar overlay bisa diletakkan di atasnya */
+.product-image-container {
+    position: relative;
+    overflow: hidden; /* Memastikan overlay tidak keluar dari wadah */
+}
+
+/* Efek grayscale untuk gambar produk yang sold out */
+.product-card.sold-out .product-image-container img {
+    filter: grayscale(100%);
+    opacity: 0.6;
+}
+
+/* Styling untuk lapisan overlay 'SOLD OUT' */
+.product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* Latar belakang putih transparan */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* Membuat overlay tidak bisa diklik, sehingga link di bawahnya tetap berfungsi */
+}
+
+/* Styling untuk teks 'SOLD OUT' */
+.product-overlay span {
+    background-color: #ffffff;
+    color: #161515;
+    padding: 5px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/*
+==============================================
+  CART PAGE STYLING
+==============================================
+*/
+.cart-container {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.cart-container h1 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 60px 20px;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
+.cart-empty p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.cart-main-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.cart-items-list {
+  flex: 3;
+}
+
+.order-summary {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 25px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  position: sticky;
+  top: 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item .product-image {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+
+.cart-item .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.cart-item .product-details {
+  flex-grow: 1;
+}
+
+.cart-item .product-details .name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+}
+
+.cart-item .product-details .price {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.cart-item .product-quantity {
+  width: 120px;
+  text-align: center;
+}
+
+.cart-item .product-quantity input[type="number"] {
+  width: 60px;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: 'Jost', sans-serif;
+  margin: 0;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+.cart-item .product-quantity input[type="number"]::-webkit-outer-spin-button,
+.cart-item .product-quantity input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cart-item .product-subtotal {
+  width: 120px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.cart-item .product-remove {
+  width: 50px;
+  text-align: right;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.btn-remove:hover {
+  color: #d9534f;
+}
+
+.order-summary h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.summary-row.total {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.btn.btn-secondary {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.btn.btn-secondary:hover {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cart-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-actions .btn {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.continue-shopping {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.continue-shopping a {
+  color: #555;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.continue-shopping a:hover {
+  border-color: #555;
+}
+
+
+/*
+==============================================
+  NOTIFICATIONS & FORMS
+==============================================
+*/
+.notification {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.notification.success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.login-alert {
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid #faebcc;
+  border-radius: 4px;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  text-align: center;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+
+/*
+==============================================
+  ADMIN PANEL
+==============================================
+*/
+.admin-wrapper {
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 200px;
+  background: #233044;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.admin-sidebar a {
+  color: #fff;
+  display: block;
+  padding: 10px;
+  border-bottom: 1px solid #445973;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+}
+
+/*
+==============================================
+  FOOTER
+==============================================
+*/
+.site-footer {
+  padding: 40px 0;
+  background-color: #fff;
+  font-size: 13px;
+  color: #555;
+}
+
+.footer-top,
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.footer-links a {
+  margin-right: 30px;
+  letter-spacing: 0.05em;
+}
+
+.footer-cta span {
+  margin-right: 15px;
+}
+
+.footer-cta a {
+  font-weight: 500;
+  color: #111;
+}
+
+.footer-divider {
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.footer-social {
+  display: flex;
+  gap: 25px;
+}
+
+.footer-social a {
+  font-size: 30px;
+}
+
+/*
+==============================================
+  RESPONSIVE MEDIA QUERIES
+==============================================
+*/
+@media (max-width: 992px) {
+  .cart-main-content {
+    flex-direction: column;
+  }
+  .order-summary {
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 576px) {
+  .cart-item {
+    flex-wrap: wrap;
+    position: relative;
+    padding-left: 120px;
+  }
+  .cart-item .product-image {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    margin-bottom: 15px;
+  }
+  .cart-item .product-details {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .cart-item .product-quantity,
+  .cart-item .product-subtotal {
+    width: 50%;
+    margin-top: 10px;
+    text-align: left;
+  }
+  .cart-item .product-quantity {
+    padding-left: 0;
+  }
+  .cart-item .product-subtotal {
+    text-align: right;
+  }
+  .cart-item .product-remove {
+    position: absolute;
+    top: 20px;
+    right: 0;
+  }
+  .cart-container h1 {
+    font-size: 2rem;
+  }
+}

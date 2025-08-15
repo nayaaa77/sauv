@@ -1,0 +1,198 @@
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Reset & Variabel */
+:root {
+    --primary-color: #3b82f6;
+    --dark-color: #1f2937;
+    --light-color: #f9fafb;
+    --grey-color: #6b7280;
+    --bg-color: #f3f4f6;
+    --white-color: #ffffff;
+    --danger-color: #ef4444;
+    --sidebar-width: 260px;
+}
+body { 
+    font-family: 'Poppins', sans-serif; 
+    margin: 0; 
+    background-color: var(--bg-color); 
+    font-size: 14px; 
+}
+.login-body {
+    overflow: hidden; /* Mencegah scroll hanya di halaman login */
+}
+
+/* =================================
+   LOGIN PAGE STYLES
+   ================================= */
+.login-wrapper { display: flex; height: 100vh; }
+.login-branding { flex: 1; background: linear-gradient(45deg, #1f2937, #374151); color: white; display: flex; justify-content: center; align-items: center; text-align: center; }
+.branding-content h2 { font-size: 48px; font-weight: 600; letter-spacing: 4px; margin: 0; }
+.branding-content p { font-size: 16px; letter-spacing: 1px; opacity: 0.8; }
+.login-form-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; background-color: #f9fafb; }
+.login-form-container { max-width: 380px; width: 100%; padding: 20px; }
+.login-form-container h3 { font-size: 28px; font-weight: 600; color: #111827; margin-top: 0; margin-bottom: 10px; }
+.login-form-container .subtitle { color: #6b7280; margin-bottom: 30px; }
+.input-group { position: relative; margin-bottom: 25px; }
+.input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #9ca3af; transition: color 0.3s ease; }
+.input-group input { width: 100%; padding: 14px 14px 14px 45px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.input-group input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+.input-group input:focus + i, .input-group:focus-within i { color: #3b82f6; }
+.btn-login { width: 100%; padding: 15px; border: none; border-radius: 8px; background-color: #1f2937; color: white; font-size: 16px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; }
+.btn-login:hover { background-color: #374151; }
+.btn-login:active { transform: scale(0.98); }
+.error-message { background-color: #fee2e2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; }
+
+/* =================================
+   ADMIN LAYOUT STYLES
+   ================================= */
+.admin-wrapper { display: flex; }
+.sidebar { width: var(--sidebar-width); background: var(--dark-color); color: var(--white-color); height: 100vh; position: fixed; top: 0; left: 0; }
+.sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid #374151; }
+.sidebar-header h3 { margin: 0; }
+.sidebar-menu { list-style: none; padding: 10px 0; margin: 0; }
+.sidebar-menu a { display: block; color: #d1d5db; padding: 15px 25px; text-decoration: none; border-left: 4px solid transparent; transition: all 0.3s ease; }
+.sidebar-menu a:hover, .sidebar-menu a.active { background: #374151; border-left-color: var(--primary-color); color: var(--white-color); }
+.sidebar-menu a i { margin-right: 15px; width: 20px; font-size: 16px; }
+.main-content { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
+.main-header { display: flex; justify-content: space-between; align-items: center; background: var(--white-color); padding: 15px 30px; border-bottom: 1px solid #e5e7eb; }
+.header-title { font-size: 22px; font-weight: 600; }
+.header-user { font-weight: 500; }
+.content-body { padding: 30px; }
+
+/* =================================
+   DASHBOARD & GENERAL CARD STYLES
+   ================================= */
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
+.card { background: var(--white-color); padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+.card h4 { margin-top: 0; color: var(--grey-color); font-weight: 500; }
+.card p { font-size: 28px; font-weight: 600; margin-bottom: 0; }
+.card-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 48px; color: var(--bg-color); }
+.chart-container { background: var(--white-color); padding: 25px; margin-top: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+
+/* =================================
+   SETTINGS PAGE STYLES
+   ================================= */
+.settings-container { max-width: 800px; margin: 0 auto; }
+.settings-container .card { margin-bottom: 30px; }
+.settings-container .card h4 { margin-top: 0; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 20px; }
+.notice { padding: 15px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: 500; }
+.notice.success { background-color: #d1fae5; color: #065f46; }
+.notice.error { background-color: #fee2e2; color: #991b1b; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-weight: 500; margin-bottom: 5px; }
+.form-group input { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 5px; box-sizing: border-box; }
+
+/* =================================
+   MANAGE PRODUCTS & OTHER PAGES (VERSI FINAL & STABIL)
+   ================================= */
+.page-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+.page-header h2 { 
+    margin: 0; 
+    font-size: 24px; 
+    font-weight: 600; 
+}
+.btn { 
+    padding: 10px 18px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    text-decoration: none; 
+    font-weight: 500; 
+    display: inline-block; 
+    text-align: center; 
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.btn-primary { 
+    background-color: var(--primary-color); 
+    color: var(--white-color); 
+}
+.card-body { 
+    padding: 0; 
+}
+.table-products { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 14px; 
+}
+.table-products thead { 
+    background-color: var(--light-color); 
+}
+
+/* Kunci utama untuk menyelaraskan semua sel dalam satu baris */
+.table-products th, .table-products td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle; /* Menjaga semua konten tetap di tengah secara vertikal */
+    word-wrap: break-word;
+}
+
+.table-products th { 
+    font-weight: 600; 
+    color: var(--grey-color); 
+    text-transform: uppercase; 
+    font-size: 12px; 
+}
+.table-products tbody tr:hover { 
+    background-color: var(--light-color); 
+}
+.table-products img { 
+    border-radius: 5px; 
+    object-fit: cover; 
+    height: 40px; 
+    width: 40px; 
+    vertical-align: middle; /* Penting untuk gambar agar sejajar juga */
+}
+
+/* Mengatur tata letak tombol di kolom 'Actions' */
+.table-products .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Tambahan untuk geser posisi */
+    position: relative;
+    top: 2px; /* Saya naikkan jadi 2px agar lebih terlihat perubahannya */
+}
+
+/* Pastikan form tidak menambah spasi aneh */
+.table-products .actions form {
+    margin: 0;
+}
+
+.table-products .actions .btn {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.table-products .no-products { 
+    text-align: center; 
+    padding: 30px; 
+    color: var(--grey-color); 
+}
+.btn-secondary { 
+    background-color: var(--dark-color); 
+    color: var(--white-color); 
+}
+.btn-danger { 
+    background-color: var(--danger-color); 
+    color: var(--white-color); 
+}
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+/* Trik untuk menggeser posisi tombol agar sempurna */
+.table-products .actions {
+    position: relative;
+    top: 1px;
+}
