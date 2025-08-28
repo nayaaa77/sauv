@@ -32,6 +32,7 @@ require_once '../includes/db_conn.php';
                 <li><a href="manage_products.php"><i class="fas fa-box"></i> Products</a></li>
                 <li><a href="orders.php"><i class="fas fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="users.php"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="manage_chatbot.php"><i class="fas fa-robot"></i> Chatbot</a></li> 
                 <li><a href="settings.php"><i class="fas fa-cog"></i> Settings</a></li>
                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>

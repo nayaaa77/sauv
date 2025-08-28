@@ -12,18 +12,11 @@ $total_orders = $orders_result ? $orders_result->fetch_assoc()['count'] : 0;
 $users_result = $conn->query("SELECT COUNT(id) as count FROM users WHERE role = 'user'");
 $total_users = $users_result ? $users_result->fetch_assoc()['count'] : 0;
 
-$revenue_result = $conn->query("SELECT SUM(total_amount) as sum FROM orders WHERE status = 'completed'");
-$total_revenue = $revenue_result ? $revenue_result->fetch_assoc()['sum'] : 0;
 ?>
 
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
 <div class="stat-cards">
-    <div class="card">
-        <h4>Total Revenue</h4>
-        <p>Rp <?php echo number_format($total_revenue ?? 0); ?></p>
-        <i class="fas fa-dollar-sign card-icon"></i>
-    </div>
     <div class="card">
         <h4>Total Orders</h4>
         <p><?php echo $total_orders ?? 0; ?></p>

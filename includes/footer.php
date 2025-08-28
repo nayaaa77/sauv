@@ -20,7 +20,25 @@
                 </div>
             </div>
         </div>
+        <div class="chatbot-container">
+        <div class="chatbot-header">
+            <p><strong>Sauvatte Bot</strong><br><span>Online</span></p>
+            <button class="chatbot-close-btn">&times;</button>
+        </div>
+        <div class="chatbot-messages">
+            <div class="chat-message bot">Halo! Ada yang bisa saya bantu? Silakan pilih salah satu pertanyaan di bawah ini.</div>
+        </div>
+        <div class="chatbot-options">
+            </div>
+    </div>
+    <button class="chatbot-toggler">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/chatbot.js"></script> </body>
+</html>
     </footer>
+
 
     <script src="assets/js/main.js"></script>
 
