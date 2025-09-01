@@ -28,7 +28,7 @@ a {
 
 /*
 ==============================================
-  HEADER / NAVBAR
+  HEADER & NAVBAR (FINAL CORRECTED VERSION)
 ==============================================
 */
 .site-header {
@@ -50,20 +50,60 @@ a {
   text-transform: uppercase;
 }
 
+/* Mengatur container utama menu */
 .nav-menu {
   list-style: none;
   display: flex;
   gap: 40px;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
+.nav-menu li {
+  list-style: none;
+}
+
+/* Mengatur link menu - INI BAGIAN KUNCI YANG DIPERBAIKI */
 .nav-menu a {
+  position: relative; /* WAJIB ADA agar garis bisa diposisikan */
+  padding: 10px 0;
   font-size: 14px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
+/* Style untuk garis bawah (disembunyikan secara default) */
+.nav-menu a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #111;
+  bottom: 0;
+  left: 0;
+  transform: scaleX(0); /* Sembunyikan garisnya */
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+/* Tampilkan garis saat kursor diarahkan (hover) */
+.nav-menu a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Garis akan SELALU TERLIHAT (STAY) untuk menu yang aktif */
+.nav-menu a.active::after {
+  transform: scaleX(1); /* Paksa garis untuk selalu terlihat */
+}
+
+/* Penebalan pada teks menu yang aktif */
+.nav-menu a.active {
+  font-weight: 500;
+}
+
+/* Mengatur ikon di sebelah kanan */
 .nav-icons {
   display: flex;
   align-items: center;
@@ -73,6 +113,7 @@ a {
 .nav-icons a {
   font-size: 18px;
 }
+
 .header-user-link {
     display: flex;
     align-items: center;
@@ -1047,3 +1088,4 @@ a {
 .option-btn:hover {
     background: #f1f0f0;
 }
+

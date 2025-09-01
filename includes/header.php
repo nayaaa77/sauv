@@ -25,6 +25,7 @@ require_once 'functions.php';
                     <li><a href="shop.php">Shop</a></li>
                     <li><a href="blog.php">Blog</a></li>
                     <li><a href="our_story.php">Our Story</a></li>
+                    <span class="magic-line"></span>  
                 </ul>
                 <div class="nav-icons">
                     <span class="divider">|</span>

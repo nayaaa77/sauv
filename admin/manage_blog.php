@@ -1,29 +1,27 @@
 <?php
 // Memulai dengan menyertakan header admin.
-// Ini sudah termasuk session start, koneksi DB, dan proteksi halaman.
 include 'includes/header_admin.php';
 
 // Menentukan direktori untuk upload gambar
 $upload_dir = '../uploads/';
 
 // --- LOGIKA UNTUK PROSES FORM (ADD, UPDATE, DELETE) ---
-
-// Proses penambahan atau pembaruan data
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $title = $_POST['title'];
-    $content = $_POST['content']; // Konten sekarang akan berisi HTML dari Summernote
+    $content = $_POST['content'];
     $author_id = $_SESSION['user_id'] ?? 1;
-
     $image_url = $_POST['existing_image'] ?? '';
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         if ($_POST['action'] === 'update' && !empty($image_url) && file_exists($upload_dir . $image_url)) {
             unlink($upload_dir . $image_url);
         }
-        
-        $image_name = time() . '_' . basename($_FILES['image']['name']);
+        // Ambil nama asli dan bersihkan dari karakter aneh
+        $original_name = basename($_FILES['image']['name']);
+        $safe_name = preg_replace("/[^a-zA-Z0-9\._-]/", "_", $original_name);
+// Gabungkan dengan timestamp untuk menjadikannya unik
+        $image_name = time() . '_' . $safe_name;
         $target_file = $upload_dir . $image_name;
-        
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
             $image_url = $image_name;
         } else {
@@ -57,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 // Proses penghapusan data
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
     $id = $_GET['id'];
-
     $stmt_select = $conn->prepare("SELECT image_url FROM blog WHERE id = ?");
     $stmt_select->bind_param("i", $id);
     $stmt_select->execute();
@@ -80,7 +77,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     $stmt_delete->close();
     exit();
 }
-
 ?>
 
 <div class="content-header">
@@ -96,9 +92,7 @@ if (isset($_GET['status'])) {
     if ($status === 'deleted') $message = 'Blog post berhasil dihapus!';
     echo "<div class='alert alert-success'>$message</div>";
 }
-?>
 
-<?php
 $action = $_GET['action'] ?? 'list';
 
 if ($action === 'add' || $action === 'edit') :
@@ -123,7 +117,7 @@ if ($action === 'add' || $action === 'edit') :
         <div class="card-header">
             <h2><?php echo $action === 'add' ? 'Add New Post' : 'Edit Post'; ?></h2>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="padding: 25px;">
             <form action="manage_blog.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="<?php echo $form_action; ?>">
                 <?php if ($action === 'edit') : ?>
@@ -133,7 +127,7 @@ if ($action === 'add' || $action === 'edit') :
 
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" required>
+                    <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($post['title'] ?? ''); ?>" required>
                 </div>
 
                 <div class="form-group">
@@ -143,9 +137,9 @@ if ($action === 'add' || $action === 'edit') :
 
                 <div class="form-group">
                     <label for="image">Image</label>
-                    <input type="file" id="image" name="image" accept="image/*">
+                    <input type="file" id="image" name="image" accept="image/*" class="form-control-file">
                     <?php if ($action === 'edit' && !empty($post['image_url'])) : ?>
-                        <p>Current Image: <br><img src="<?php echo $upload_dir . htmlspecialchars($post['image_url']); ?>" alt="Current Image" width="150"></p>
+                        <p class="mt-2">Current Image: <br><img src="<?php echo $upload_dir . htmlspecialchars($post['image_url']); ?>" alt="Current Image" width="150"></p>
                     <?php endif; ?>
                 </div>
 
@@ -159,14 +153,14 @@ if ($action === 'add' || $action === 'edit') :
 
 <?php else : ?>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h2>Blog Posts</h2>
             <a href="manage_blog.php?action=add" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Post
             </a>
         </div>
         <div class="card-body">
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -185,7 +179,7 @@ if ($action === 'add' || $action === 'edit') :
                     ?>
                             <tr>
                                 <td><?php echo $count++; ?></td>
-                                <td><img src="<?php echo $upload_dir . htmlspecialchars($row['image_url']); ?>" alt="Blog Image" width="100"></td>
+                                <td><img src="<?php echo $upload_dir . rawurlencode(htmlspecialchars($row['image_url'])); ?>" alt="Blog Image" width="100"></td>
                                 <td><?php echo htmlspecialchars($row['title']); ?></td>
                                 <td><?php echo date('d M Y, H:i', strtotime($row['created_at'])); ?></td>
                                 <td class="actions">
@@ -198,7 +192,7 @@ if ($action === 'add' || $action === 'edit') :
                     else :
                     ?>
                         <tr>
-                            <td colspan="5" style="text-align:center;">No blog posts found.</td>
+                            <td colspan="5" class="text-center">No blog posts found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -207,8 +201,6 @@ if ($action === 'add' || $action === 'edit') :
     </div>
 <?php endif; ?>
 
-
 <?php
-// Menutup dengan menyertakan footer admin
 include 'includes/footer_admin.php';
 ?>

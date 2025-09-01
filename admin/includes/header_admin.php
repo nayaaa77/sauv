@@ -18,8 +18,10 @@ require_once '../includes/db_conn.php';
     <title>Admin Panel - Sauvatte</title>
     <link rel="stylesheet" href="assets/css/admin-style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-</head>
+    </head>
 <body>
     <div class="admin-wrapper">
         <aside class="sidebar">
@@ -29,9 +31,7 @@ require_once '../includes/db_conn.php';
             <ul class="sidebar-menu">
                 <li><a href="index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="manage_products.php"><i class="fas fa-box"></i> Products</a></li>
-                
                 <li><a href="manage_blog.php"><i class="fas fa-newspaper"></i> Blog</a></li>
-                
                 <li><a href="orders.php"><i class="fas fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="users.php"><i class="fas fa-users"></i> Users</a></li>
                 <li><a href="manage_chatbot.php"><i class="fas fa-robot"></i> Chatbot</a></li> 
@@ -42,12 +42,9 @@ require_once '../includes/db_conn.php';
 
         <main class="main-content">
             <header class="main-header">
-                <div class="header-title">
-                    </div>
+                <div class="header-title"></div>
                 <div class="header-user">
                     <span>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                 </div>
             </header>
             <div class="content-body">
-                
-

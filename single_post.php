@@ -23,11 +23,35 @@ if ($result->num_rows === 1) :
 ?>
 
 <style>
-    /* CSS disesuaikan dengan layout baru */
+    /* === BAGIAN CSS YANG DIPERBARUI === */
+    .post-layout-wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        margin-top: 40px;
+    }
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #e5e5e5;
+        border-radius: 50%;
+        color: #333;
+        text-decoration: none;
+        font-size: 16px;
+        flex-shrink: 0; /* Mencegah tombol menyusut */
+        transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+        background-color: #f7f7f7;
+    }
     .single-post-container {
+        flex: 1; /* Konten akan mengambil sisa ruang */
         max-width: 720px; 
-        margin: 60px auto;
-        padding: 20px;
+        margin: 0 auto; /* Tetap di tengah dalam sisa ruang */
+        padding: 0 20px;
         text-align: center;
     }
     .post-date {
@@ -44,10 +68,8 @@ if ($result->num_rows === 1) :
     }
     .post-image {
         width: 100%;
-        height: auto; /* Biarkan tinggi gambar menyesuaikan secara otomatis */
-        /* Batasi tinggi gambar maks. 70% dari tinggi layar browser */
+        height: auto;
         max-height: 70vh; 
-        /* HAPUS object-fit: cover agar gambar tidak terpotong */
         margin-bottom: 40px;
         border-radius: 0; 
     }
@@ -55,31 +77,30 @@ if ($result->num_rows === 1) :
         line-height: 1.8;
         font-size: 1.1rem;
         text-align: left; 
-        white-space: pre-wrap;
     }
-    .back-link {
-        display: inline-block;
-        margin-top: 40px;
-        text-decoration: none;
-        color: #007bff;
-    }
+    /* Link kembali di bawah sudah tidak diperlukan, jadi bisa dihapus */
 </style>
 
 <div class="container">
-    <div class="single-post-container">
-        <p class="post-date">
-            <?php echo date('d F Y', strtotime($post['created_at'])); ?>
-        </p>
-        
-        <h1 class="post-title"><?php echo htmlspecialchars($post['title']); ?></h1>
-        
-        <img class="post-image" src="./uploads/<?php echo htmlspecialchars($post['image_url']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+    <div class="post-layout-wrapper">
+        <a href="javascript:history.back()" class="btn-back" title="Kembali">
+            <i class="fas fa-arrow-left"></i>
+        </a>
 
-        <div class="single-post-content">
-    <?php echo $post['content']; ?>
-</div>
-        
-        <a href="blog.php" class="back-link">&larr; Kembali ke Blog</a>
+        <div class="single-post-container">
+            <p class="post-date">
+                <?php echo date('d F Y', strtotime($post['created_at'])); ?>
+            </p>
+            
+            <h1 class="post-title"><?php echo htmlspecialchars($post['title']); ?></h1>
+            
+            <img class="post-image" src="./uploads/<?php echo rawurlencode($post['image_url']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+    
+            <div class="single-post-content">
+                <?php echo $post['content']; ?>
+            </div>
+            
+            </div>
     </div>
 </div>
 

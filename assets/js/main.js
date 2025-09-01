@@ -114,4 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateButtonStates();
     }
+
+    // ===== Kode untuk menandai menu navbar yang aktif =====
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    const currentPage = window.location.pathname.split("/").pop(); // Mengambil nama file dari URL
+
+    navLinks.forEach(link => {
+        const linkPage = link.getAttribute('href');
+        if (linkPage === currentPage) {
+            link.classList.add('active');
+        }
+    });
+});
 });

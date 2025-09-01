@@ -9,43 +9,41 @@ require_once 'includes/db_conn.php';
     /* CSS yang disesuaikan agar cocok dengan gambar */
     .blog-container {
         display: grid;
-        /* Menggunakan 4 kolom di layar besar, dan akan responsif di layar kecil */
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 25px; /* Sedikit mengurangi jarak antar item */
+        gap: 25px;
         margin-top: 20px;
         margin-bottom: 40px;
     }
     .blog-post {
-        /* Menghilangkan border dan shadow agar terlihat lebih minimalis */
         text-decoration: none;
         color: #333;
         display: flex;
         flex-direction: column;
+        overflow: hidden; /* DIUBAH: Penting untuk memotong gambar yang membesar */
     }
     .blog-post:hover img {
-        /* Efek hover sederhana pada gambar */
         opacity: 0.9;
+        transform: scale(1); /* DIUBAH: Kembali ke ukuran normal saat di-hover */
     }
     .blog-post img {
         width: 100%;
-        height: 350px; /* Membuat gambar lebih tinggi agar lebih dominan */
+        height: 350px;
         object-fit: cover;
-        transition: opacity 0.3s ease;
+        /* DIUBAH: Tambahkan transisi untuk transform dan atur keadaan awal gambar */
+        transform: scale(1.05);
+        transition: transform 0.4s ease, opacity 0.3s ease;
     }
     .blog-post-content {
-        /* Hanya padding atas-bawah untuk teks */
         padding: 15px 5px;
     }
     .blog-post-content h3 {
-        /* Menyesuaikan gaya font judul */
         margin-top: 0;
         margin-bottom: 5px;
         font-size: 0.9rem;
-        font-weight: 500; /* Sedikit lebih tebal dari normal */
+        font-weight: 500;
         line-height: 1.4;
     }
     .blog-post-content .date {
-        /* Menyesuaikan gaya font tanggal */
         font-size: 0.9rem;
         color: #555;
     }
@@ -64,7 +62,7 @@ require_once 'includes/db_conn.php';
             while ($row = $result->fetch_assoc()) :
         ?>
                 <a href="single_post.php?id=<?php echo $row['id']; ?>" class="blog-post">
-                    <img src="./uploads/<?php echo htmlspecialchars($row['image_url']); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                    <img src="./uploads/<?php echo rawurlencode(htmlspecialchars($row['image_url'])); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
                     <div class="blog-post-content">
                         <h3><?php echo htmlspecialchars($row['title']); ?></h3>
                         <span class="date">
