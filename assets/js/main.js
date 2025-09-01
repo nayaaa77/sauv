@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('register-form');
 
     if (toggleButtons.length > 0 && loginForm && registerForm) {
-        // ... (logika login/register tetap sama)
         toggleButtons.forEach(button => {
             button.addEventListener('click', function() {
                 toggleButtons.forEach(btn => btn.classList.remove('active'));
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabPanes = document.querySelectorAll('.product-tabs .tab-pane');
 
     if (tabLinks.length > 0 && tabPanes.length > 0) {
-        // ... (logika tab produk tetap sama)
         const activateTabFromHash = () => {
             const currentHash = window.location.hash;
             if (currentHash) {
@@ -64,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainImage = document.getElementById('main-image');
 
     if (thumbnails.length > 0 && mainImage) {
-        // ... (logika galeri gambar tetap sama)
         if (thumbnails[0]) {
             thumbnails[0].classList.add('active');
         }
@@ -78,26 +75,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Kode untuk Tombol Kuantitas (BARU DITAMBAHKAN) =====
+    // ===== Kode untuk Tombol Kuantitas Produk =====
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
     const quantityInput = document.getElementById('quantity');
 
-    // Pastikan elemen kuantitas ada di halaman ini
     if (decreaseBtn && increaseBtn && quantityInput) {
-        // Event listener untuk tombol TAMBAH (+)
+        const maxStock = parseInt(quantityInput.max, 10);
+
+        function updateButtonStates() {
+            const currentValue = parseInt(quantityInput.value, 10);
+            increaseBtn.disabled = currentValue >= maxStock;
+            decreaseBtn.disabled = currentValue <= 1;
+        }
+
         increaseBtn.addEventListener('click', function() {
             let currentValue = parseInt(quantityInput.value, 10);
-            quantityInput.value = currentValue + 1;
-        });
-
-        // Event listener untuk tombol KURANG (-)
-        decreaseBtn.addEventListener('click', function() {
-            let currentValue = parseInt(quantityInput.value, 10);
-            // Pastikan nilai tidak kurang dari 1
-            if (currentValue > 1) {
-                quantityInput.value = currentValue - 1;
+            if (currentValue < maxStock) {
+                quantityInput.value = currentValue + 1;
+                updateButtonStates();
             }
         });
+
+        decreaseBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value, 10);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                updateButtonStates();
+            }
+        });
+
+        quantityInput.addEventListener('input', function() {
+            let currentValue = parseInt(quantityInput.value, 10);
+            if (currentValue > maxStock) quantityInput.value = maxStock;
+            if (currentValue < 1) quantityInput.value = 1;
+            updateButtonStates();
+        });
+
+        updateButtonStates();
     }
 });

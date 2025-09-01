@@ -57,70 +57,74 @@ include 'includes/db_conn.php';
             ?>
             
             <div class="container product-page-container">
-                <div class="product-detail-layout">
-                    <div class="product-images">
-                        <div class="thumbnails">
-                            <?php foreach ($gallery_images as $image): ?>
-                            <img src="assets/img/<?php echo htmlspecialchars($image); ?>" alt="Thumbnail <?php echo htmlspecialchars($product_data['name']); ?>" class="thumbnail-item">
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="main-image-container">
-                            <img src="assets/img/<?php echo htmlspecialchars($gallery_images[0] ?? 'placeholder.png'); ?>" alt="<?php echo htmlspecialchars($product_data['name']); ?>" id="main-image">
-                        </div>
-                    </div>
+                <div class="product-content-wrapper">
+                    
+                    <a href="javascript:history.back()" class="btn-back" title="Kembali"><i class="fas fa-arrow-left"></i></a>
 
-                    <div class="product-info">
-                        <h1><?php echo htmlspecialchars($product_data['name']); ?></h1>
-                        <p class="price">Rp <?php echo number_format($product_data['price'], 0, ',', '.'); ?></p>
-                        
-                        <?php if ($product_data['stock'] > 0 && $product_data['stock'] <= 3): ?>
-                            <p class="stock-status low-stock"><?php echo $product_data['stock']; ?> pieces left!</p>
-                        <?php elseif ($product_data['stock'] <= 0): ?>
-                            <p class="stock-status sold-out">Sold Out</p>
-                        <?php endif; ?>
-
-                        <form action="cart.php" method="POST">
-                            <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product_data['id']); ?>">
-                            
-                            <?php if ($product_data['stock'] > 0): ?>
-                                <div class="quantity-selector">
-                                    <button type="button" class="quantity-btn" id="decrease-qty">-</button>
-                                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product_data['stock']; ?>">
-                                    <button type="button" class="quantity-btn" id="increase-qty">+</button>
+                    <div class="product-main-content">
+                        <div class="product-detail-layout">
+                            <div class="product-images">
+                                <div class="thumbnails">
+                                    <?php foreach ($gallery_images as $image): ?>
+                                    <img src="assets/img/<?php echo htmlspecialchars($image); ?>" alt="Thumbnail <?php echo htmlspecialchars($product_data['name']); ?>" class="thumbnail-item">
+                                    <?php endforeach; ?>
                                 </div>
-                                <button type="submit" name="add_to_cart" class="btn-add-to-cart">Tambah ke Keranjang</button>
-                            <?php else: ?>
-                                <div class="quantity-selector">
-                                    <button type="button" class="quantity-btn" id="decrease-qty" disabled>-</button>
-                                    <input type="number" id="quantity" name="quantity" value="0" min="0" disabled>
-                                    <button type="button" class="quantity-btn" id="increase-qty" disabled>+</button>
+                                <div class="main-image-container">
+                                    <img src="assets/img/<?php echo htmlspecialchars($gallery_images[0] ?? 'placeholder.png'); ?>" alt="<?php echo htmlspecialchars($product_data['name']); ?>" id="main-image">
                                 </div>
-                                <button type="submit" name="add_to_cart" class="btn-add-to-cart" disabled>Habis Terjual</button>
-                            <?php endif; ?>
-                        </form>
-                    </div>
-                </div>
+                            </div>
 
-                <div class="product-tabs">
-                    <div class="tab-headers">
-                        <a href="#description" class="tab-link active">Description</a>
-                        <a href="#additional-info" class="tab-link">Additional Information</a>
-                    </div>
-                    <div class="tab-content">
-                        <div id="description" class="tab-pane active">
-                            <p><?php echo nl2br(htmlspecialchars($product_data['description'])); ?></p>
+                            <div class="product-info">
+                                <h1><?php echo htmlspecialchars($product_data['name']); ?></h1>
+                                <p class="price">Rp <?php echo number_format($product_data['price'], 0, ',', '.'); ?></p>
+                                
+                                <?php if ($product_data['stock'] > 0 && $product_data['stock'] <= 3): ?>
+                                    <p class="stock-status low-stock"><?php echo $product_data['stock']; ?> pieces left!</p>
+                                <?php elseif ($product_data['stock'] <= 0): ?>
+                                    <p class="stock-status sold-out">Sold Out</p>
+                                <?php endif; ?>
+
+                                <form action="cart.php" method="POST">
+                                    <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product_data['id']); ?>">
+                                    
+                                    <?php if ($product_data['stock'] > 0): ?>
+                                        <div class="quantity-selector">
+                                            <button type="button" class="quantity-btn" id="decrease-qty">-</button>
+                                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product_data['stock']; ?>">
+                                            <button type="button" class="quantity-btn" id="increase-qty">+</button>
+                                        </div>
+                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart">Tambah ke Keranjang</button>
+                                    <?php else: ?>
+                                        <div class="quantity-selector">
+                                            <button type="button" class="quantity-btn" id="decrease-qty" disabled>-</button>
+                                            <input type="number" id="quantity" name="quantity" value="0" min="0" disabled>
+                                            <button type="button" class="quantity-btn" id="increase-qty" disabled>+</button>
+                                        </div>
+                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart" disabled>Habis Terjual</button>
+                                    <?php endif; ?>
+                                </form>
+                            </div>
                         </div>
-                        <div id="additional-info" class="tab-pane">
-                            <?php if (!empty($product_data['additional_info'])): ?>
-                                <p><?php echo nl2br(htmlspecialchars($product_data['additional_info'])); ?></p>
-                            <?php else: ?>
-                                <p>Tidak ada informasi tambahan untuk produk ini.</p>
-                            <?php endif; ?>
+
+                        <div class="product-tabs">
+                            <div class="tab-headers">
+                                <a href="#description" class="tab-link active">Description</a>
+                                <a href="#additional-info" class="tab-link">Additional Information</a>
+                            </div>
+                            <div class="tab-content">
+                                <div id="description" class="tab-pane active">
+                                    <p><?php echo nl2br(htmlspecialchars($product_data['description'])); ?></p>
+                                </div>
+                                <div id="additional-info" class="tab-pane">
+                                    <?php if (!empty($product_data['additional_info'])): ?>
+                                        <p><?php echo nl2br(htmlspecialchars($product_data['additional_info'])); ?></p>
+                                    <?php else: ?>
+                                        <p>Tidak ada informasi tambahan untuk produk ini.</p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                
-            </div>
+                    </div> </div> </div>
 
             <?php
         } else {

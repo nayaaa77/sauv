@@ -1,8 +1,11 @@
 <?php
-// Bagian PHP Anda di atas sudah sangat baik, tidak perlu diubah.
-// Cukup salin-tempel dari kode Anda.
 require_once 'includes/db_conn.php';
 require_once 'includes/functions.php';
+
+// Selalu mulai session di awal
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Wajib login dan keranjang tidak boleh kosong
 if (!is_logged_in() || empty($_SESSION['cart'])) {
@@ -42,7 +45,8 @@ if (isset($_POST['place_order'])) {
         // 2. Simpan setiap item ke tabel 'order_items'
         $stmt_items = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price_per_item) VALUES (?, ?, ?, ?)");
         foreach ($_SESSION['cart'] as $product_id => $item) {
-            $stmt_items->bind_param("iiid", $order_id, $product_id, $item['quantity'], $item['price']);
+            $product_id_int = (int) $product_id;
+            $stmt_items->bind_param("iiid", $order_id, $product_id_int, $item['quantity'], $item['price']);
             $stmt_items->execute();
         }
         $stmt_items->close();
@@ -69,7 +73,8 @@ if (isset($_POST['place_order'])) {
 <?php include 'includes/header.php'; ?>
 
 <div class="container">
-    <h2>Checkout</h2>
+    <button onclick="history.back()" class="btn btn-secondary" style="margin-top: 20px;">Back</button>
+    <h2 style="margin-top: 20px;">Checkout</h2>
     <div class="checkout-layout">
         <div class="checkout-form">
             <form action="checkout.php" method="POST">
@@ -136,6 +141,7 @@ if (isset($_POST['place_order'])) {
 .checkout-layout {
     display: flex;
     gap: 40px;
+    margin-bottom: 40px;
 }
 .checkout-form {
     flex: 2; /* Form lebih besar */
@@ -145,6 +151,7 @@ if (isset($_POST['place_order'])) {
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 5px;
+    align-self: flex-start; /* Agar summary tidak memanjang ke bawah */
 }
 </style>
 

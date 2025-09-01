@@ -11,7 +11,6 @@ include 'includes/header.php';
 ?>
 
 <div class="page-content">
-
     <?php
     // Bagian untuk menampilkan notifikasi jika ada
     if (!empty($logout_notification)):

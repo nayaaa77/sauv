@@ -90,7 +90,7 @@ if (isset($_POST['remove_item'])) {
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-<div class="cart-container">
+<div class="container">
     <h1>Keranjang Belanja Anda</h1>
 
     <?php if (empty($_SESSION['cart'])): ?>

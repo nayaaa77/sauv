@@ -103,6 +103,78 @@ a {
   background: #555;
 }
 
+.btn.btn-secondary {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.btn.btn-secondary:hover {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+/* Tombol Back Ikon */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e5e5e5;
+    border-radius: 50%;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.btn-back:hover {
+    background-color: #f7f7f7;
+    color: #000;
+}
+
+/*
+==============================================
+  MY ACCOUNT PAGE
+==============================================
+*/
+.account-container { padding-top: 40px; padding-bottom: 80px; }
+.account-nav { display: flex; flex-wrap: wrap; gap: 40px; border-bottom: 1px solid #e5e5e5; margin-bottom: 40px; }
+.account-nav a { padding: 15px 0; text-decoration: none; color: #555; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; position: relative; border-bottom: 2px solid transparent; transition: color 0.3s, border-color 0.3s; }
+.account-nav a.active, .account-nav a:hover { color: #111; font-weight: 500; border-bottom-color: #111; }
+.account-content h2 { font-size: 22px; font-weight: 400; margin-bottom: 30px; letter-spacing: 0.05em; }
+
+.details-layout { display: flex; flex-wrap: wrap; gap: 60px; }
+.details-forms { flex: 2; min-width: 300px; }
+.address-display-sidebar { flex: 1; min-width: 250px; padding-left: 40px; border-left: 1px solid #e5e5e5; }
+
+.details-form { max-width: 650px; }
+.details-form .form-group { margin-bottom: 25px; }
+.details-form label { display: block; font-size: 13px; margin-bottom: 8px; color: #555; }
+
+.label-translation {
+    font-size: 0.8em;
+    color: #6c757d;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.details-form input { width: 100%; padding: 12px; border: 1px solid #e5e5e5; box-sizing: border-box; font-size: 14px; }
+.details-form .field-hint { font-size: 12px; color: #888; margin-top: 5px; }
+.details-form .password-change-header { font-size: 18px; font-weight: 500; margin-top: 40px; margin-bottom: 20px; }
+.details-form .btn-save { display: inline-block; padding: 14px 40px; background: #111; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-size: 13px; letter-spacing: 0.1em; margin-top: 10px; }
+
+.address-display-sidebar h3 { font-size: 18px; font-weight: 500; }
+.address-display-sidebar p { color: #555; line-height: 1.7; }
+.address-display-sidebar a { color: #111; text-decoration: underline; font-size: 13px; }
+
+.notification-box { padding: 15px; margin-bottom: 20px; border-radius: 4px; text-align: center; font-weight: 500; }
+.notification-box.success { background-color: #d4edda; color: #155724; }
+.notification-box.error { background-color: #f8d7da; color: #721c24; }
+
+
 /*
 ==============================================
   HOMEPAGE STYLING
@@ -227,6 +299,7 @@ a {
   margin-bottom: 10px;
   overflow: hidden;
   aspect-ratio: 1 / 1; 
+  position: relative;
 }
 
 .product-card img {
@@ -280,10 +353,23 @@ a {
   PRODUCT DETAIL PAGE (UPDATED)
 ==============================================
 */
+.product-content-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    /* KODE DIPINDAHKAN KE SINI untuk menurunkan seluruh blok */
+    margin-top: 40px; 
+}
+
+.product-main-content {
+    flex: 1;
+}
+
 .product-detail-layout {
   display: flex;
   gap: 40px;
-  margin-top: 40px;
+  /* KODE DIHAPUS DARI SINI */
+  margin-top: 0; 
 }
 
 .product-images {
@@ -472,33 +558,29 @@ a {
 
 /* --- Style untuk Produk Sold Out --- */
 
-/* Membuat wadah gambar menjadi 'relative' agar overlay bisa diletakkan di atasnya */
 .product-image-container {
     position: relative;
-    overflow: hidden; /* Memastikan overlay tidak keluar dari wadah */
+    overflow: hidden; 
 }
 
-/* Efek grayscale untuk gambar produk yang sold out */
 .product-card.sold-out .product-image-container img {
     filter: grayscale(100%);
     opacity: 0.6;
 }
 
-/* Styling untuk lapisan overlay 'SOLD OUT' */
 .product-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5); /* Latar belakang putih transparan */
+    background-color: rgba(255, 255, 255, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none; /* Membuat overlay tidak bisa diklik, sehingga link di bawahnya tetap berfungsi */
+    pointer-events: none;
 }
 
-/* Styling untuk teks 'SOLD OUT' */
 .product-overlay span {
     background-color: #ffffff;
     color: #161515;
@@ -668,17 +750,6 @@ a {
   border-top: 1px solid #ddd;
 }
 
-.btn.btn-secondary {
-  background-color: transparent;
-  color: #333;
-  border: 1px solid #ccc;
-}
-
-.btn.btn-secondary:hover {
-  background-color: #f1f1f1;
-  color: #333;
-}
-
 .cart-actions {
   margin-top: 20px;
   display: flex;
@@ -753,35 +824,6 @@ a {
   box-sizing: border-box;
 }
 
-
-/*
-==============================================
-  ADMIN PANEL
-==============================================
-*/
-.admin-wrapper {
-  display: flex;
-}
-
-.admin-sidebar {
-  width: 200px;
-  background: #233044;
-  color: #fff;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.admin-sidebar a {
-  color: #fff;
-  display: block;
-  padding: 10px;
-  border-bottom: 1px solid #445973;
-}
-
-.admin-content {
-  flex: 1;
-  padding: 20px;
-}
 
 /*
 ==============================================
@@ -884,25 +926,25 @@ a {
   }
 }
 /* ==============================================
-   CHATBOT STYLES
-   ============================================== */
-   .chatbot-toggler {
-    position: fixed;
-    right: 30px;
-    bottom: 30px;
-    width: 60px;
-    height: 60px;
-    background-color: #111;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    z-index: 1000;
+    CHATBOT STYLES
+    ============================================== */
+    .chatbot-toggler {
+     position: fixed;
+     right: 30px;
+     bottom: 30px;
+     width: 60px;
+     height: 60px;
+     background-color: #111;
+     color: #fff;
+     border: none;
+     border-radius: 50%;
+     font-size: 24px;
+     cursor: pointer;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+     z-index: 1000;
 }
 
 .chatbot-container {
