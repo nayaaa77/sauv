@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ===== Kode untuk menandai menu navbar yang aktif =====
-document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-menu a');
     const currentPage = window.location.pathname.split("/").pop(); // Mengambil nama file dari URL
 
@@ -126,5 +125,4 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
-});
 });

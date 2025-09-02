@@ -5,8 +5,8 @@ include 'includes/db_conn.php';
 
 <div class="page-content">
     <div class="container">
-        <h2 style="margin-top: 40px;">Semua Produk</h2>
-        <p>Jelajahi koleksi produk kami.</p>
+        <h2 style="margin-top: 40px;">Shop All</h2>
+        <p>Explore the complete collection.</p>
         
         <div class="product-grid" style="margin-top: 30px; margin-bottom: 60px;">
             <?php

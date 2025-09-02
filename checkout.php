@@ -73,8 +73,13 @@ if (isset($_POST['place_order'])) {
 <?php include 'includes/header.php'; ?>
 
 <div class="container">
-    <button onclick="history.back()" class="btn btn-secondary" style="margin-top: 20px;">Back</button>
-    <h2 style="margin-top: 20px;">Checkout</h2>
+    <div class="page-header-custom" style="display: flex; align-items: center; gap: 15px; margin-top: 40px; margin-bottom: 20px;">
+        <a href="javascript:history.back()" class="btn-back" title="Kembali">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 style="margin: 0;">Checkout</h1>
+    </div>
+    
     <div class="checkout-layout">
         <div class="checkout-form">
             <form action="checkout.php" method="POST">

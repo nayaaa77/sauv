@@ -91,12 +91,12 @@ if (isset($_POST['remove_item'])) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <div class="container">
-    <h1>Keranjang Belanja Anda</h1>
+    <h1>Your Cart</h1>
 
     <?php if (empty($_SESSION['cart'])): ?>
         <div class="cart-empty">
-            <p>Keranjang belanja Anda kosong.</p>
-            <a href="shop.php" class="btn">Kembali Belanja</a>
+            <p>Your cart is currently empty.</p>
+            <a href="shop.php" class="btn">EXPLORE THE COLLECTION</a>
         </div>
     <?php else: ?>
         <form action="cart.php" method="POST">
@@ -133,29 +133,29 @@ if (isset($_POST['remove_item'])) {
                 </div>
 
                 <div class="order-summary">
-                    <h2>Ringkasan Pesanan</h2>
+                    <h2>Order Summary</h2>
                     <div class="summary-row">
                         <span>Subtotal</span>
                         <span>Rp <?php echo number_format($total_cart, 0, ',', '.'); ?></span>
                     </div>
                     <div class="summary-row">
-                        <span>Ongkos Kirim</span>
-                        <span>Dihitung di checkout</span>
+                        <span>Shipping</span>
+                        <span>Calculated at checkout</span>
                     </div>
                     <div class="summary-row total">
                         <span>Total</span>
                         <span>Rp <?php echo number_format($total_cart, 0, ',', '.'); ?></span>
                     </div>
                     <div class="cart-actions">
-                        <button type="submit" name="update_cart" class="btn btn-secondary">Update Keranjang</button>
-                        <a href="checkout.php" class="btn">Lanjutkan ke Checkout</a>
+                        <button type="submit" name="update_cart" class="btn btn-secondary">Update Cart</button>
+                        <a href="checkout.php" class="btn">Proceed to Checkout</a>
                     </div>
                 </div>
 
             </div>
             
             <div class="continue-shopping">
-                <a href="shop.php"><i class="fa-solid fa-arrow-left"></i> Lanjutkan Belanja</a>
+                <a href="shop.php"><i class="fa-solid fa-arrow-left"></i> Back to the Collection</a>
             </div>
             
         </form>

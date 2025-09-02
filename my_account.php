@@ -149,7 +149,7 @@ $conn->close();
         <?php if ($page === 'orders'): ?>
             <h2>My Orders</h2>
             <?php if (empty($orders)): ?>
-                <p>Anda belum memiliki pesanan.</p>
+                <p>Any orders you place will appear here.</p>
             <?php else: ?>
                 <table style="width:100%; border-collapse: collapse; font-size: 14px;">
                     <thead>
