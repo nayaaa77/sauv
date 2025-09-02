@@ -2,42 +2,62 @@
 require_once 'includes/db_conn.php';
 require_once 'includes/functions.php';
 
-// Selalu mulai session di awal
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Wajib login dan keranjang tidak boleh kosong
 if (!is_logged_in() || empty($_SESSION['cart'])) {
     header('Location: index.php');
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$shipping_address_str = '';
+
+// Ambil alamat tersimpan dari user
+$stmt_addr = $conn->prepare("SELECT * FROM addresses WHERE user_id = ?");
+$stmt_addr->bind_param("i", $user_id);
+$stmt_addr->execute();
+$saved_address = $stmt_addr->get_result()->fetch_assoc();
+$stmt_addr->close();
+
+
 // Proses jika form checkout disubmit
 if (isset($_POST['place_order'])) {
-    $user_id = $_SESSION['user_id'];
-    $address1 = $_POST['address1'];
-    $city = $_POST['city'];
-    $province = $_POST['province'];
-    $postal_code = $_POST['postal_code'];
-    $country = $_POST['country'];
-    
-    // Gabungkan alamat menjadi satu string
-    $shipping_address = "$address1, $city, $province, $postal_code, $country";
-    
+    $address_choice = $_POST['address_choice'] ?? 'saved';
+
+    if ($address_choice === 'new' || !$saved_address) {
+        // Jika pilih alamat baru atau tidak ada alamat tersimpan
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $address1 = $_POST['address_line1'];
+        $city = $_POST['city'];
+        $sub_district = $_POST['sub_district'];
+        $province = $_POST['province'];
+        $postal_code = $_POST['postal_code'];
+        $phone = $_POST['phone'];
+        $country = 'Indonesia';
+        
+        // Gabungkan semua informasi menjadi satu string alamat pengiriman
+        $shipping_address_str = "$first_name $last_name, $phone, $address1, $sub_district, $city, $province, $postal_code, $country";
+
+    } else {
+        // Jika pakai alamat tersimpan
+        $shipping_address_str = "{$saved_address['first_name']} {$saved_address['last_name']}, {$saved_address['phone']}, {$saved_address['address_line1']}, {$saved_address['sub_district']}, {$saved_address['city']}, {$saved_address['province']}, {$saved_address['postal_code']}, Indonesia";
+    }
+
     // Hitung total harga dari session
     $total_amount = 0;
     foreach ($_SESSION['cart'] as $item) {
         $total_amount += $item['price'] * $item['quantity'];
     }
 
-    // Mulai transaksi database
     $conn->begin_transaction();
 
     try {
         // 1. Simpan ke tabel 'orders'
         $stmt_order = $conn->prepare("INSERT INTO orders (user_id, total_amount, shipping_address) VALUES (?, ?, ?)");
-        $stmt_order->bind_param("ids", $user_id, $total_amount, $shipping_address);
+        $stmt_order->bind_param("ids", $user_id, $total_amount, $shipping_address_str);
         $stmt_order->execute();
         $order_id = $stmt_order->insert_id;
         $stmt_order->close();
@@ -51,20 +71,13 @@ if (isset($_POST['place_order'])) {
         }
         $stmt_items->close();
 
-        // Commit transaksi jika semua berhasil
         $conn->commit();
-
-        // Kosongkan keranjang
         unset($_SESSION['cart']);
-
-        // Redirect ke halaman konfirmasi
-        header('Location: order_confirmation.php?order_id=' . $order_id);
+        header('Location: order_detail.php?id=' . $order_id . '&confirm=true');
         exit();
 
     } catch (mysqli_sql_exception $exception) {
-        // Rollback jika terjadi kesalahan
         $conn->rollback();
-        // Tampilkan pesan error
         die("Order failed: " . $exception->getMessage());
     }
 }
@@ -80,84 +93,105 @@ if (isset($_POST['place_order'])) {
         <h1 style="margin: 0;">Checkout</h1>
     </div>
     
-    <div class="checkout-layout">
-        <div class="checkout-form">
-            <form action="checkout.php" method="POST">
+    <form action="checkout.php" method="POST">
+        <div class="checkout-layout">
+            <div class="checkout-form">
                 <h3>Shipping Address</h3>
-                <div class="form-group">
-                    <label>Address Line 1</label>
-                    <input type="text" name="address1" required>
-                </div>
-                <div class="form-group">
-                    <label>City</label>
-                    <input type="text" name="city" required>
-                </div>
-                <div class="form-group">
-                    <label>Province</label>
-                    <input type="text" name="province" required>
-                </div>
-                <div class="form-group">
-                    <label>Postal Code</label>
-                    <input type="text" name="postal_code" required>
-                </div>
-                <div class="form-group">
-                    <label>Country</label>
-                    <input type="text" name="country" value="Indonesia" required>
-                </div>
-                <button type="submit" name="place_order" class="btn">Place Order</button>
-            </form>
-        </div>
 
-        <div class="order-summary">
-            <h3>Order Summary</h3>
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Produk</th>
-                        <th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $total_for_display = 0;
-                    foreach ($_SESSION['cart'] as $item):
-                        $subtotal = $item['price'] * $item['quantity'];
-                        $total_for_display += $subtotal;
-                    ?>
-                    <tr>
-                        <td style="padding: 8px;"><?php echo htmlspecialchars($item['name']); ?> (x<?php echo $item['quantity']; ?>)</td>
-                        <td style="text-align: right; padding: 8px;">Rp <?php echo number_format($subtotal, 0, ',', '.'); ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th style="text-align: left; padding: 8px; border-top: 1px solid #ddd;">Total</th>
-                        <th style="text-align: right; padding: 8px; border-top: 1px solid #ddd;">Rp <?php echo number_format($total_for_display, 0, ',', '.'); ?></th>
-                    </tr>
-                </tfoot>
-            </table>
+                <?php if ($saved_address): ?>
+                <div class="address-selection">
+                    <div class="address-box saved-address-box">
+                        <input type="radio" id="address_saved" name="address_choice" value="saved" checked>
+                        <label for="address_saved">
+                            <strong>Use Saved Address</strong>
+                            <p>
+                                <?php echo htmlspecialchars($saved_address['first_name'] . ' ' . $saved_address['last_name']); ?><br>
+                                <?php echo htmlspecialchars($saved_address['address_line1']); ?><br>
+                                <?php echo htmlspecialchars($saved_address['city'] . ', ' . $saved_address['province'] . ' ' . $saved_address['postal_code']); ?><br>
+                                Indonesia
+                            </p>
+                        </label>
+                    </div>
+                    <div class="address-box new-address-toggle">
+                        <input type="radio" id="address_new" name="address_choice" value="new">
+                        <label for="address_new">
+                            <strong>Use a Different Address</strong>
+                        </label>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <div id="new-address-form" class="new-address-form-container" <?php if ($saved_address) echo 'style="display: none;"'; ?>>
+                    <div style="display: flex; gap: 20px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="first_name">First name *</label>
+                            <input type="text" id="first_name" name="first_name" <?php if (!$saved_address) echo 'required'; ?>>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="last_name">Last name *</label>
+                            <input type="text" id="last_name" name="last_name" <?php if (!$saved_address) echo 'required'; ?>>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address_line1">Full Address</label>
+                        <input type="text" id="address_line1" name="address_line1" <?php if (!$saved_address) echo 'required'; ?>>
+                    </div>
+                    <div class="form-group">
+                        <label for="province">State / Province <span class="label-translation">(Provinsi)</span></label>
+                        <input type="text" id="province" name="province" <?php if (!$saved_address) echo 'required'; ?>>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City / Town <span class="label-translation">(Kota/Kabupaten)</span></label>
+                        <input type="text" id="city" name="city" <?php if (!$saved_address) echo 'required'; ?>>
+                    </div>
+                    <div class="form-group">
+                        <label for="sub_district">Sub-District <span class="label-translation">(Kecamatan)</span></label>
+                        <input type="text" id="sub_district" name="sub_district" <?php if (!$saved_address) echo 'required'; ?>>
+                    </div>
+                    <div class="form-group">
+                        <label for="postal_code">Postal Code <span class="label-translation">(Kode Pos)</span></label>
+                        <input type="text" id="postal_code" name="postal_code" <?php if (!$saved_address) echo 'required'; ?>>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" id="phone" name="phone">
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Produk</th>
+                            <th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $total_for_display = 0;
+                        foreach ($_SESSION['cart'] as $item):
+                            $subtotal = $item['price'] * $item['quantity'];
+                            $total_for_display += $subtotal;
+                        ?>
+                        <tr>
+                            <td style="padding: 8px;"><?php echo htmlspecialchars($item['name']); ?> (x<?php echo $item['quantity']; ?>)</td>
+                            <td style="text-align: right; padding: 8px;">Rp <?php echo number_format($subtotal, 0, ',', '.'); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="text-align: left; padding: 8px; border-top: 1px solid #ddd;">Total</th>
+                            <th style="text-align: right; padding: 8px; border-top: 1px solid #ddd;">Rp <?php echo number_format($total_for_display, 0, ',', '.'); ?></th>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <button type="submit" name="place_order" class="btn" style="width: 100%; margin-top: 20px;">Place Order</button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
-
-<style>
-/* Style tambahan untuk layout checkout */
-.checkout-layout {
-    display: flex;
-    gap: 40px;
-    margin-bottom: 40px;
-}
-.checkout-form {
-    flex: 2; /* Form lebih besar */
-}
-.order-summary {
-    flex: 1; /* Ringkasan lebih kecil */
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-    align-self: flex-start; /* Agar summary tidak memanjang ke bawah */
-}
-</style>
-
 <?php include 'includes/footer.php'; ?>

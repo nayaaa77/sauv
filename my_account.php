@@ -151,22 +151,34 @@ $conn->close();
             <?php if (empty($orders)): ?>
                 <p>Any orders you place will appear here.</p>
             <?php else: ?>
-                <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+                <table class="orders-table">
                     <thead>
-                        <tr style="background-color:#f9f9f9;">
-                            <th style="text-align:left; padding:12px; border-bottom:1px solid #ddd;">Order ID</th>
-                            <th style="text-align:left; padding:12px; border-bottom:1px solid #ddd;">Date</th>
-                            <th style="text-align:left; padding:12px; border-bottom:1px solid #ddd;">Status</th>
-                            <th style="text-align:right; padding:12px; border-bottom:1px solid #ddd;">Total</th>
+                        <tr>
+                            <th>ORDER NUMBER</th>
+                            <th>DATE</th>
+                            <th>STATUS</th>
+                            <th>TRACKING NUMBER</th>
+                            <th>TOTAL</th>
+                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($orders as $order): ?>
                         <tr>
-                            <td style="padding:12px; border-bottom:1px solid #eee;">#<?php echo $order['id']; ?></td>
-                            <td style="padding:12px; border-bottom:1px solid #eee;"><?php echo date('F j, Y', strtotime($order['order_date'])); ?></td>
-                            <td style="padding:12px; border-bottom:1px solid #eee;"><?php echo htmlspecialchars(ucfirst($order['status'])); ?></td>
-                            <td style="text-align:right; padding:12px; border-bottom:1px solid #eee;">Rp <?php echo number_format($order['total_amount'], 0, ',', '.'); ?></td>
+                            <td>#<?php echo $order['id']; ?></td>
+                            <td><?php echo date('F j, Y', strtotime($order['order_date'])); ?></td>
+                            <td><?php echo htmlspecialchars(ucfirst($order['status'])); ?></td>
+                            <td class="tracking-number">
+                                <?php if (!empty($order['resi_number'])): ?>
+                                    <a href="https://www.jne.co.id/id/tracking/trace?q=<?php echo htmlspecialchars($order['resi_number']); ?>" target="_blank">
+                                        <?php echo htmlspecialchars($order['resi_number']); ?>
+                                    </a>
+                                <?php else: ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
+                            <td>Rp <?php echo number_format($order['total_amount'], 0, ',', '.'); ?></td>
+                            <td><a href="order_detail.php?id=<?php echo $order['id']; ?>" class="btn-view">View</a></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

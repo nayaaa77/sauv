@@ -1,12 +1,12 @@
-<?php 
+<?php
 $page_title = "Manage Orders"; // Set judul halaman
-include 'includes/header_admin.php'; 
+include 'includes/header_admin.php';
 
 // Logika untuk update status dan resi
 if (isset($_POST['update_order'])) {
     $order_id = (int)$_POST['order_id'];
     $status = $_POST['status'];
-    $resi_number = !empty($_POST['resi_number']) ? $_POST['resi_number'] : NULL;
+    $resi_number = !empty($_POST['resi_number']) ? trim($_POST['resi_number']) : NULL;
 
     $stmt = $conn->prepare("UPDATE orders SET status = ?, resi_number = ? WHERE id = ?");
     $stmt->bind_param("ssi", $status, $resi_number, $order_id);
@@ -19,22 +19,19 @@ if (isset($_POST['update_order'])) {
 
 // Ambil semua data pesanan
 $orders_result = $conn->query("
-    SELECT o.*, u.full_name 
-    FROM orders o 
-    LEFT JOIN users u ON o.user_id = u.id 
+    SELECT o.*, u.full_name
+    FROM orders o
+    LEFT JOIN users u ON o.user_id = u.id
     ORDER BY o.order_date DESC
 ");
 ?>
 
-<!-- Script untuk mengatur judul di header utama -->
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
-<!-- Header Halaman Konten -->
 <div class="page-header">
     <h2><?php echo $page_title; ?></h2>
 </div>
 
-<!-- Tabel Pesanan di dalam Card -->
 <div class="card">
     <div class="card-body">
         <table class="table-products table-orders">

@@ -125,4 +125,51 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
+
+    // ===== Kode untuk Tombol Kuantitas di Halaman Keranjang =====
+    const cartItemsList = document.querySelector('.cart-items-list');
+
+    if (cartItemsList) {
+        cartItemsList.addEventListener('click', function(event) {
+            const target = event.target;
+
+            if (target.classList.contains('increase-qty-cart') || target.classList.contains('decrease-qty-cart')) {
+                const productId = target.dataset.id;
+                const quantityInput = document.querySelector(`.quantity-input-cart[data-id="${productId}"]`);
+                let currentValue = parseInt(quantityInput.value, 10);
+                const maxStock = parseInt(quantityInput.max, 10);
+
+                if (target.classList.contains('increase-qty-cart')) {
+                    if (currentValue < maxStock) {
+                        quantityInput.value = currentValue + 1;
+                    }
+                } else if (target.classList.contains('decrease-qty-cart')) {
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                }
+            }
+        });
+    }
+
+    // ===== Kode untuk toggle form alamat di halaman Checkout =====
+    const addressChoiceRadios = document.querySelectorAll('input[name="address_choice"]');
+    const newAddressForm = document.getElementById('new-address-form');
+    const newAddressInputs = newAddressForm ? newAddressForm.querySelectorAll('input') : [];
+
+    if (addressChoiceRadios.length > 0 && newAddressForm) {
+        addressChoiceRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'new') {
+                    newAddressForm.style.display = 'block';
+                    // Jadikan input di form alamat baru 'required'
+                    newAddressInputs.forEach(input => input.required = true);
+                } else {
+                    newAddressForm.style.display = 'none';
+                    // Hapus 'required' dari input agar form bisa disubmit tanpa mengisinya
+                    newAddressInputs.forEach(input => input.required = false);
+                }
+            });
+        });
+    }
 });

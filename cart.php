@@ -38,7 +38,7 @@ if (isset($_POST['add_to_cart'])) {
 
     if ($product_id > 0 && $quantity > 0) {
         // Ambil info produk dari DB termasuk gambar
-        $stmt = $conn->prepare("SELECT name, price, image_url FROM products WHERE id = ?");
+        $stmt = $conn->prepare("SELECT name, price, image_url, stock FROM products WHERE id = ?");
         $stmt->bind_param("i", $product_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -50,7 +50,8 @@ if (isset($_POST['add_to_cart'])) {
                     'name'     => $product['name'],
                     'price'    => $product['price'],
                     'quantity' => $quantity,
-                    'image'    => $product['image_url']
+                    'image'    => $product['image_url'],
+                    'stock'    => $product['stock']
                 ];
             }
         }
@@ -118,7 +119,11 @@ if (isset($_POST['remove_item'])) {
                             <p class="price">Rp <?php echo number_format($item['price'], 0, ',', '.'); ?></p>
                         </div>
                         <div class="product-quantity">
-                            <input type="number" name="quantities[<?php echo $product_id; ?>]" value="<?php echo $item['quantity']; ?>" min="0" aria-label="Kuantitas">
+                            <div class="quantity-selector">
+                                <button type="button" class="quantity-btn-cart decrease-qty-cart" data-id="<?php echo $product_id; ?>">-</button>
+                                <input type="number" name="quantities[<?php echo $product_id; ?>]" value="<?php echo $item['quantity']; ?>" min="1" max="<?php echo $item['stock'] ?? 99; ?>" class="quantity-input-cart" data-id="<?php echo $product_id; ?>">
+                                <button type="button" class="quantity-btn-cart increase-qty-cart" data-id="<?php echo $product_id; ?>">+</button>
+                            </div>
                         </div>
                         <div class="product-subtotal">
                             Rp <?php echo number_format($subtotal, 0, ',', '.'); ?>
