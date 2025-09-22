@@ -2,14 +2,15 @@
 // Selalu mulai sesi untuk dapat mengakses dan menghapusnya
 session_start();
 
-// 1. Hapus semua variabel sesi
-$_SESSION = array();
+// Simpan pesan notifikasi di session SEBELUM session dihancurkan
+$_SESSION['flash_message'] = "Anda telah berhasil logout.";
 
-// 2. Hancurkan sesi di server
-session_destroy();
+// 1. Hapus semua variabel sesi yang terkait dengan login
+unset($_SESSION['user_id']);
+unset($_SESSION['user_name']);
+unset($_SESSION['user_role']);
 
-// 3. Redirect pengguna ke halaman home DENGAN pesan sukses
-// [DIUBAH] Menambahkan ?logout=success di akhir URL
-header("Location: index.php?logout=success");
+// 2. Redirect pengguna ke halaman home (tanpa parameter URL)
+header("Location: index.php");
 exit();
 ?>

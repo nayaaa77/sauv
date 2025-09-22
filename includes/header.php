@@ -9,7 +9,7 @@ require_once 'functions.php';
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sauvatte</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -41,8 +41,8 @@ require_once 'functions.php';
                             <?php endif; ?>
                         </a>
                     <?php else: ?>
-                        <a href="login_register.php" aria-label="My Account">
-                            <i class="fas fa-user"></i>
+                        <a href="login_register.php" aria-label="Login">
+                            <i class="fas fa-sign-in-alt"></i>
                         </a>
                     <?php endif; ?>
                 </div>

@@ -50,7 +50,6 @@ include 'includes/db_conn.php';
                 }
             }
 
-            // Jika tidak ada gambar di galeri, gunakan gambar utama
             if (empty($gallery_images) && !empty($product_data['main_image'])) {
                 $gallery_images[] = $product_data['main_image'];
             }
@@ -89,11 +88,11 @@ include 'includes/db_conn.php';
                                     
                                     <?php if ($product_data['stock'] > 0): ?>
                                         <div class="quantity-selector">
-                                            <button type="button" class="quantity-btn" id="decrease-qty">-</button>
-                                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product_data['stock']; ?>">
-                                            <button type="button" class="quantity-btn" id="increase-qty">+</button>
+                                            <button type="button" class="quantity-btn" id="decrease-qty" <?php if (!is_logged_in()) echo 'disabled'; ?>>-</button>
+                                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product_data['stock']; ?>" <?php if (!is_logged_in()) echo 'disabled'; ?>>
+                                            <button type="button" class="quantity-btn" id="increase-qty" <?php if (!is_logged_in()) echo 'disabled'; ?>>+</button>
                                         </div>
-                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart">Tambah ke Keranjang</button>
+                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart" <?php if (!is_logged_in()) echo 'disabled'; ?>>Tambah ke Keranjang</button>
                                     <?php else: ?>
                                         <div class="quantity-selector">
                                             <button type="button" class="quantity-btn" id="decrease-qty" disabled>-</button>
@@ -103,6 +102,12 @@ include 'includes/db_conn.php';
                                         <button type="submit" name="add_to_cart" class="btn-add-to-cart" disabled>Habis Terjual</button>
                                     <?php endif; ?>
                                 </form>
+
+                                <?php if (!is_logged_in() && $product_data['stock'] > 0): ?>
+                                    <div class="login-prompt-text">
+                                        Anda harus login atau register untuk berbelanja.
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -124,7 +129,9 @@ include 'includes/db_conn.php';
                                 </div>
                             </div>
                         </div>
-                    </div> </div> </div>
+                    </div>
+                </div>
+            </div>
 
             <?php
         } else {

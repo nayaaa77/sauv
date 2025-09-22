@@ -15,7 +15,7 @@ if (session_status() == PHP_SESSION_NONE) {
 if (!isset($_SESSION['user_id'])) {
     // Simpan pesan untuk ditampilkan di halaman login
     $_SESSION['message'] = "Anda harus login untuk mengakses keranjang belanja.";
-    header('Location: login_register.php'); // <-- DIUBAH DARI login.php
+    header('Location: login_register.php');
     exit(); // Pastikan script berhenti setelah redirect
 }
 // ===================================================================
@@ -29,15 +29,10 @@ if (!isset($_SESSION['cart'])) {
 
 // 1. Proses Tambah ke Keranjang (dari halaman product_detail.php)
 if (isset($_POST['add_to_cart'])) {
-    // Pengecekan login sudah dilakukan di atas, jadi blok ini sudah aman.
-    // Jika Anda ingin pesan yang lebih spesifik saat menambah item,
-    // pengecekan bisa diduplikasi di sini, tapi pengecekan di awal sudah cukup.
-
     $product_id = (int)$_POST['product_id'];
     $quantity = (int)$_POST['quantity'];
 
     if ($product_id > 0 && $quantity > 0) {
-        // Ambil info produk dari DB termasuk gambar
         $stmt = $conn->prepare("SELECT name, price, image_url, stock FROM products WHERE id = ?");
         $stmt->bind_param("i", $product_id);
         $stmt->execute();
@@ -63,7 +58,6 @@ if (isset($_POST['add_to_cart'])) {
 
 // 2. Proses Update Keranjang
 if (isset($_POST['update_cart'])) {
-    // Pengecekan login di awal file sudah melindungi aksi ini
     foreach ($_POST['quantities'] as $product_id => $quantity) {
         $quantity = (int)$quantity;
         if ($quantity > 0) {
@@ -71,7 +65,7 @@ if (isset($_POST['update_cart'])) {
                 $_SESSION['cart'][$product_id]['quantity'] = $quantity;
             }
         } else {
-            unset($_SESSION['cart'][$product_id]); // Hapus jika kuantitas 0
+            unset($_SESSION['cart'][$product_id]);
         }
     }
     header('Location: cart.php');
@@ -80,7 +74,6 @@ if (isset($_POST['update_cart'])) {
 
 // 3. Proses Hapus Item
 if (isset($_POST['remove_item'])) {
-    // Pengecekan login di awal file sudah melindungi aksi ini
     $product_id_to_remove = (int)$_POST['remove_item'];
     unset($_SESSION['cart'][$product_id_to_remove]);
     header('Location: cart.php');

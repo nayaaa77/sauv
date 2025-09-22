@@ -1,23 +1,26 @@
 <?php
-// Logika untuk menangkap notifikasi logout
-$logout_notification = '';
-if (isset($_GET['logout']) && $_GET['logout'] === 'success') {
-    $logout_notification = "Anda telah berhasil logout";
-}
-
 // Sertakan koneksi database dan header
+// session_start() sudah dipanggil di dalam header.php
 include 'includes/db_conn.php'; 
 include 'includes/header.php'; 
+
+// Logika untuk menangkap notifikasi dari session (flash message)
+$notification = '';
+if (isset($_SESSION['flash_message'])) {
+    $notification = $_SESSION['flash_message'];
+    // Hapus pesan dari session agar tidak muncul lagi
+    unset($_SESSION['flash_message']);
+}
 ?>
 
 <div class="page-content">
     <?php
     // Bagian untuk menampilkan notifikasi jika ada
-    if (!empty($logout_notification)):
+    if (!empty($notification)):
     ?>
         <div class="container">
             <div class="notification success">
-                <?php echo $logout_notification; ?>
+                <?php echo $notification; ?>
             </div>
         </div>
     <?php endif; ?>
