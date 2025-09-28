@@ -93,7 +93,7 @@ if (isset($_POST['login'])) {
                 unset($_SESSION['redirect_to']); // Hapus session agar tidak redirect ke sana terus
                 header("Location: " . $redirect_url);
             } else {
-                header('Location: my_account.php'); // Tujuan default
+                header('Location: index.php'); // Tujuan default
             }
             exit();
         } else {
