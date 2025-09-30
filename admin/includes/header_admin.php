@@ -25,8 +25,8 @@ require_once '../includes/db_conn.php';
 <body>
     <div class="admin-wrapper">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Sauvatte Admin</h3>
+        <div class="sidebar-header">
+                <img src="../assets/img/logo.png" alt="Sauvatte Admin Logo" class="sidebar-logo">
             </div>
             <ul class="sidebar-menu">
                 <li><a href="index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -34,7 +34,6 @@ require_once '../includes/db_conn.php';
                 <li><a href="manage_blog.php"><i class="fas fa-newspaper"></i> Blog</a></li>
                 <li><a href="orders.php"><i class="fas fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="users.php"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="manage_chatbot.php"><i class="fas fa-robot"></i> Chatbot</a></li> 
                 <li><a href="settings.php"><i class="fas fa-cog"></i> Settings</a></li>
                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>

@@ -20,27 +20,23 @@
                 </div>
             </div>
         </div>
-        <div class="chatbot-container">
-        <div class="chatbot-header">
-            <p><strong>Sauvatte Bot</strong><br><span>Online</span></p>
-            <button class="chatbot-close-btn">&times;</button>
-        </div>
-        <div class="chatbot-messages">
-            <div class="chat-message bot">Halo! Ada yang bisa saya bantu? Silakan pilih salah satu pertanyaan di bawah ini.</div>
-        </div>
-        <div class="chatbot-options">
-            </div>
-    </div>
-    <button class="chatbot-toggler">
-        <i class="fas fa-comment-dots"></i>
-    </button>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/chatbot.js"></script> </body>
-</html>
     </footer>
 
 
     <script src="assets/js/main.js"></script>
 
-</body>
+ <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/68da958471718d194ebbbc40/1j6auttha';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+    </body>
 </html>

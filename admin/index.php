@@ -32,11 +32,15 @@ $total_users = $users_result ? $users_result->fetch_assoc()['count'] : 0;
         <p><?php echo $total_users ?? 0; ?></p>
         <i class="fas fa-users card-icon"></i>
     </div>
-</div>
+    
+    <a href="https://dashboard.tawk.to/" target="_blank" class="card-link" style="text-decoration:none;">
+        <div class="card tawk-card">
+            <h4>Tawk.to Dashboard</h4>
+            <p>Go to Chat</p>
+            <i class="tawk-icon card-icon" id="tawkIcon"></i> 
+        </div>
+    </a>
+    </div>
 
-<div class="chart-container">
-    <h3>Sales Overview</h3>
-    <canvas id="salesChart"></canvas>
-</div>
 
 <?php include 'includes/footer_admin.php'; ?>

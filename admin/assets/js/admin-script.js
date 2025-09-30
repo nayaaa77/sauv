@@ -27,5 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (link.getAttribute('href') === currentPage) {
             link.classList.add('active');
         }
+
+        // Logika untuk menambahkan ikon Tawk.to secara dinamis
+    const tawkIconElement = document.getElementById('tawkIcon');
+    if (tawkIconElement) {
+        // Menggunakan ikon Font Awesome yang tersedia
+        tawkIconElement.classList.add('fas', 'fa-comment-dots');
+    }
     });
 });
