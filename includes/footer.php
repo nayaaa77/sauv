@@ -5,10 +5,6 @@
                     <a href="#">TERMS OF SERVICES</a>
                     <a href="#">SHIPPING AND RETURNS</a>
                 </div>
-                <div class="footer-cta">
-                    <span>Ingin mengajukan pengembalian barang?</span>
-                    <a href="https://wa.me/6281238245960" target="_blank">Chat via WhatsApp <i class="fas fa-arrow-right"></i></a>
-                </div>
             </div>
             <hr class="footer-divider">
             <div class="footer-bottom">

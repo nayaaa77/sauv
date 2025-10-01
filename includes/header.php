@@ -29,8 +29,20 @@ require_once 'functions.php';
                 </ul>
                 <div class="nav-icons">
                     <span class="divider">|</span>
-                    <a href="cart.php" aria-label="Shopping Cart">
+                    
+                    <a href="cart.php" aria-label="Shopping Cart" class="cart-icon-wrapper">
                         <i class="fas fa-shopping-cart"></i>
+                        <?php
+                        // Hitung jumlah item unik di keranjang
+                        $cart_count = 0;
+                        if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+                            $cart_count = count($_SESSION['cart']);
+                        }
+                        // Tampilkan badge hanya jika ada item di keranjang
+                        if ($cart_count > 0):
+                        ?>
+                            <span class="cart-badge"><?php echo $cart_count; ?></span>
+                        <?php endif; ?>
                     </a>
 
                     <?php if (is_logged_in()): ?>

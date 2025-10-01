@@ -92,7 +92,7 @@ include 'includes/db_conn.php';
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?php echo $product_data['stock']; ?>" <?php if (!is_logged_in()) echo 'disabled'; ?>>
                                             <button type="button" class="quantity-btn" id="increase-qty" <?php if (!is_logged_in()) echo 'disabled'; ?>>+</button>
                                         </div>
-                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart" <?php if (!is_logged_in()) echo 'disabled'; ?>>Tambah ke Keranjang</button>
+                                        <button type="submit" name="add_to_cart" class="btn-add-to-cart" <?php if (!is_logged_in()) echo 'disabled'; ?>>Add To Cart</button>
                                     <?php else: ?>
                                         <div class="quantity-selector">
                                             <button type="button" class="quantity-btn" id="decrease-qty" disabled>-</button>

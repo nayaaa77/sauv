@@ -162,14 +162,48 @@ document.addEventListener('DOMContentLoaded', function() {
             radio.addEventListener('change', function() {
                 if (this.value === 'new') {
                     newAddressForm.style.display = 'block';
-                    // Jadikan input di form alamat baru 'required'
                     newAddressInputs.forEach(input => input.required = true);
                 } else {
                     newAddressForm.style.display = 'none';
-                    // Hapus 'required' dari input agar form bisa disubmit tanpa mengisinya
                     newAddressInputs.forEach(input => input.required = false);
                 }
             });
         });
+    }
+
+    // ===== KODE UNTUK ANIMASI IKON KERANJANG (DENGAN PERBAIKAN) =====
+    const addToCartForm = document.querySelector('form[action="cart.php"]');
+    const cartIcon = document.querySelector('.cart-icon-wrapper');
+
+    if (addToCartForm && cartIcon) {
+        const addToCartButton = addToCartForm.querySelector('button[name="add_to_cart"]');
+        
+        if (addToCartButton) {
+            addToCartForm.addEventListener('submit', function(e) {
+                if (addToCartButton.disabled) {
+                    return;
+                }
+
+                e.preventDefault();
+                cartIcon.classList.add('updated');
+
+                cartIcon.addEventListener('animationend', () => {
+                    cartIcon.classList.remove('updated');
+                }, { once: true });
+
+                setTimeout(() => {
+                    // === BAGIAN PENTING YANG DIPERBAIKI ===
+                    // Buat input tersembunyi untuk memberi tahu server bahwa ini adalah aksi 'add_to_cart'
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'add_to_cart';
+                    hiddenInput.value = '1'; // Nilainya bisa apa saja, yang penting 'name' nya ada
+                    addToCartForm.appendChild(hiddenInput);
+                    // =====================================
+
+                    addToCartForm.submit();
+                }, 400);
+            });
+        }
     }
 });
