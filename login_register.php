@@ -17,12 +17,13 @@ if (isset($_SESSION['user_id'])) {
 
 require_once 'includes/db_conn.php';
 require_once 'includes/functions.php';
-require_once 'includes/mailer_config.php'; // Muat konfigurasi email
+// require_once 'includes/mailer_config.php'; // Konfigurasi email tidak lagi diperlukan untuk registrasi
 
 $errors = [];
-// --- PROSES REGISTRASI ---
+$notification = ''; // Variabel untuk pesan notifikasi
+
+// --- PROSES REGISTRASI (TELAH DIMODIFIKASI) ---
 if (isset($_POST['register'])) {
-    // ... (kode registrasi Anda tidak berubah) ...
     $full_name = $_POST['full_name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -43,23 +44,17 @@ if (isset($_POST['register'])) {
 
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $verification_token = bin2hex(random_bytes(32));
+        $is_verified = 1; // Langsung set status terverifikasi
 
-        $stmt = $conn->prepare("INSERT INTO users (full_name, email, password, verification_token) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $full_name, $email, $hashed_password, $verification_token);
+        // Query INSERT diubah, tidak lagi menyimpan token verifikasi
+        $stmt = $conn->prepare("INSERT INTO users (full_name, email, password, is_verified) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $full_name, $email, $hashed_password, $is_verified);
         
         if ($stmt->execute()) {
-            $verification_link = "http://localhost/sauv/verify.php?token=" . $verification_token;
-            $email_subject = "Verify Your Account - Sauvatte";
-            $email_body = "
-                <h3>Welcome to Sauvatte!</h3>
-                <p>Please click the link below to verify your account. If the link is not clickable, please copy and paste the full URL into your browser's address bar.</p>
-                <p><a href='$verification_link' style='padding: 10px 15px; background-color: #111; color: #fff; text-decoration: none; border-radius: 5px;'>Verify My Account</a></p>
-                <p><small>Full Link: $verification_link</small></p>
-            ";
-            
-            send_email($email, $email_subject, $email_body);
-            header('Location: check_email.php');
+            // Pengiriman email dinonaktifkan
+            // Alihkan ke halaman login dengan pesan sukses
+            $_SESSION['message'] = "Registrasi berhasil! Anda sekarang bisa login.";
+            header('Location: login_register.php');
             exit();
         } else {
             $errors[] = "Registrasi gagal, silakan coba lagi.";
@@ -68,7 +63,7 @@ if (isset($_POST['register'])) {
     }
 }
 
-// --- PROSES LOGIN ---
+// --- PROSES LOGIN (TIDAK ADA PERUBAHAN) ---
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -80,6 +75,7 @@ if (isset($_POST['login'])) {
     
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
+        // Karena pendaftaran baru langsung verified, pengecekan ini akan lolos
         if ($user['is_verified'] == 0) {
             $errors[] = "Akun Anda belum diverifikasi. Silakan cek email Anda.";
         } elseif (password_verify($password, $user['password'])) {
@@ -87,13 +83,12 @@ if (isset($_POST['login'])) {
             $_SESSION['user_name'] = $user['full_name'];
             $_SESSION['user_role'] = $user['role'];
             
-            // Periksa apakah ada URL tujuan setelah login
             if (isset($_SESSION['redirect_to'])) {
                 $redirect_url = $_SESSION['redirect_to'];
-                unset($_SESSION['redirect_to']); // Hapus session agar tidak redirect ke sana terus
+                unset($_SESSION['redirect_to']);
                 header("Location: " . $redirect_url);
             } else {
-                header('Location: index.php'); // Tujuan default
+                header('Location: index.php');
             }
             exit();
         } else {
@@ -120,12 +115,7 @@ if (isset($_POST['login'])) {
         .notification { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; text-align: center; font-weight: 500; }
         .notification.success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
         .error-messages { color: red; background-color: #ffebee; border: 1px solid red; padding: 10px; margin-bottom: 20px; font-size: 14px; text-align: left; }
-        
-        /* --- KODE BARU --- */
-        /* 2. Style untuk Notifikasi Login dari halaman lain */
         .login-alert { padding: 15px; margin-bottom: 20px; border: 1px solid #faebcc; border-radius: 4px; color: #8a6d3b; background-color: #fcf8e3; text-align: center; font-weight: 500;}
-        /* --- AKHIR KODE BARU --- */
-        
         .form-toggle { display: flex; border: 1px solid #e5e5e5; margin-bottom: 30px; }
         .toggle-btn { flex: 1; padding: 12px 10px; background-color: #f7f7f7; border: none; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s ease; }
         .toggle-btn.active { background-color: #fff; border: 1px solid #111; margin: -1px; }
@@ -143,16 +133,17 @@ if (isset($_POST['login'])) {
 
     <div class="account-container">
         <?php
+            // Menampilkan notifikasi dari session (untuk pesan sukses registrasi atau pesan lainnya)
             if (isset($_SESSION['message']) && !empty($_SESSION['message'])) {
-                echo '<div class="login-alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
-                unset($_SESSION['message']);
+                // Menentukan style notifikasi berdasarkan isi pesan
+                if (strpos(strtolower($_SESSION['message']), 'berhasil') !== false || strpos(strtolower($_SESSION['message']), 'successful') !== false) {
+                    echo '<div class="notification success">' . htmlspecialchars($_SESSION['message']) . '</div>';
+                } else {
+                    echo '<div class="login-alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
+                }
+                unset($_SESSION['message']); // Hapus pesan setelah ditampilkan
             }
         ?>
-        <?php if (!empty($register_notification)): ?>
-            <div class="notification success">
-                <?php echo $register_notification; ?>
-            </div>
-        <?php endif; ?>
 
         <h1>My account</h1>
         <div class="logo-container">
