@@ -26,10 +26,10 @@ if (isset($_POST['login'])) {
             header('Location: index.php');
             exit();
         } else {
-            $error = 'Email atau Password salah.';
+            $error = 'Incorrect email or password.';
         }
     } else {
-        $error = 'Email atau Password salah.';
+        $error = 'Incorrect email or password.';
     }
     $stmt->close();
 }
@@ -41,35 +41,31 @@ if (isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Sauvatte</title>
     <link rel="stylesheet" href="assets/css/admin-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="login-body">
-    <div class="login-wrapper">
-        <div class="login-branding">
-            <div class="branding-content">
-                <h2>Sauvette</h2>
-                <p>Content Management System</p>
-            </div>
-        </div>
-        <div class="login-form-wrapper">
-            <div class="login-form-container">
-                <h3>Admin Sign In</h3>
-                <p class="subtitle">Welcome back! Please enter your details.</p>
-                <?php if(!empty($error)): ?>
+    <div class="login-container">
+        <div class="login-form-panel">
+            <div class="login-form-content">
+                <h3>The Ateiler Awaits!</h3>
+                <p class="subtitle">Sauvatte Content Management</p> <?php if(!empty($error)): ?>
                     <div class="error-message"><?php echo $error; ?></div>
                 <?php endif; ?>
+
                 <form action="login_admin.php" method="POST">
-                    <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" name="email" placeholder="Email" required>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password" placeholder="Password" required>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
                     </div>
                     <button type="submit" name="login" class="btn-login">Sign In</button>
                 </form>
             </div>
+        </div>
+        <div class="login-image-panel">
+            <img src="../assets/img/sauvatte-logo.png" alt="Sauvatte Logo" class="login-logo-right">
         </div>
     </div>
 </body>

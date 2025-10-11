@@ -1,21 +1,20 @@
 /* Import Font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
 /* Reset & Variabel */
 :root {
-    --primary-color: #007BFF; /* Biru yang lebih standar */
-    --accent-color: #28a745; /* Hijau untuk highlight */
-    --dark-color: #212529; /* Hampir hitam */
-    --sidebar-bg: #2C3E50; /* Dark Slate Blue */
+    --primary-color: #C5A565;
+    --sidebar-bg: #3D2B1F;
+    --bg-color: #FBF9F1;
+    --dark-color: #212529;
     --sidebar-text: #ECF0F1;
-    --light-color: #f9fafb;
     --grey-color: #6c757d;
-    --bg-color: #F8F9FA; /* Lightest Gray */
     --white-color: #ffffff;
     --danger-color: #dc3545;
-    --shadow-light: 0 0 10px rgba(0, 0, 0, 0.05);
+    --border-color: #e9ecef;
     --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --sidebar-width: 240px; /* Sedikit lebih ramping */
+    --sidebar-width: 240px;
 }
 
 body {
@@ -32,134 +31,143 @@ a {
 }
 
 /* =================================
-   LOGIN PAGE STYLES (Dipertahankan)
+   LOGIN PAGE STYLES
    ================================= */
 .login-body {
     overflow: hidden;
-}
-
-.login-wrapper {
-    display: flex;
-    height: 100vh;
-}
-
-.login-branding {
-    flex: 1;
-    background: linear-gradient(45deg, var(--sidebar-bg), #34495E);
-    color: white;
+    background-color: var(--sidebar-bg);
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+}
+
+.login-container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    min-height: 550px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.login-form-panel {
+    flex-basis: 50%;
+    background-color: var(--white-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.login-form-content {
+    width: 100%;
+    max-width: 350px;
+}
+
+.login-form-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: var(--dark-color);
     text-align: center;
 }
 
-.branding-content h2 {
-    font-size: 48px;
-    font-weight: 600;
-    letter-spacing: 4px;
-    margin: 0;
-}
-
-.branding-content p {
-    font-size: 16px;
-    letter-spacing: 1px;
-    opacity: 0.8;
-}
-
-.login-form-wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--white-color);
-}
-
-.login-form-container {
-    max-width: 380px;
-    width: 100%;
-    padding: 20px;
-    box-shadow: var(--shadow-medium);
-    border-radius: 10px;
-    background: var(--white-color);
-}
-
-.login-form-container h3 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--dark-color);
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.login-form-container .subtitle {
+.login-form-panel .subtitle {
     color: var(--grey-color);
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    font-size: 15px;
+    text-align: center;
 }
 
-.input-group {
-    position: relative;
+.login-form-panel .form-group {
     margin-bottom: 25px;
+    text-align: left;
 }
 
-.input-group i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    transition: color 0.3s ease;
+.login-form-panel .form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+    color: var(--dark-color);
 }
 
-.input-group input {
+.login-form-panel input[type="email"],
+.login-form-panel input[type="password"] {
     width: 100%;
-    padding: 14px 14px 14px 45px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #cbd5e1;
     box-sizing: border-box;
     font-size: 14px;
+    border-radius: 0;
+    background-color: transparent;
     transition: border-color 0.3s ease;
 }
 
-.input-group input:focus {
+.login-form-panel input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.input-group:focus-within i {
-    color: var(--primary-color);
+    box-shadow: none;
 }
 
 .btn-login {
     width: 100%;
-    padding: 15px;
+    padding: 14px;
     border: none;
-    border-radius: 8px;
-    background-color: var(--dark-color);
+    border-radius: 6px;
+    background-color: var(--primary-color);
     color: var(--white-color);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-top: 20px;
+    transition: all 0.3s ease;
 }
 
 .btn-login:hover {
-    background-color: #374151;
+    background-color: #b38e4c;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .error-message {
     background-color: #fee2e2;
     color: #991b1b;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 6px;
     margin-bottom: 20px;
     text-align: center;
     font-size: 14px;
 }
 
+.login-image-panel {
+    flex-basis: 50%;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.login-logo-right {
+    max-width: 80%;
+    height: auto;
+}
+
+@media (max-width: 800px) {
+    .login-image-panel { display: none; }
+    .login-form-panel { flex-basis: 100%; border-radius: 12px; }
+    .login-container { max-width: 450px; min-height: auto; }
+}
 
 /* =================================
-   ADMIN LAYOUT STYLES (Diperbarui)
+   ADMIN LAYOUT STYLES
    ================================= */
 .admin-wrapper {
     display: flex;
@@ -178,48 +186,55 @@ a {
 }
 
 .sidebar-header {
-    /* UBAHAN 1: Menambah ruang vertikal untuk logo yang lebih besar */
     padding: 30px 20px; 
     text-align: center;
-    border-bottom: 1px solid #34495E;
+    border-bottom: 1px solid rgba(236, 240, 241, 0.1);
 }
 
-/* START: Custom Logo Style untuk mengganti h3 */
 .sidebar-header .sidebar-logo {
     max-width: 100%;
     height: auto;
-    /* UBAHAN 2: Memperbesar tinggi maksimum logo */
-    max-height: 65px; 
+    max-height: 60px; 
     margin: 0; 
     filter: brightness(0) invert(1); 
 }
 
-/* END: Custom Logo Style */
 .sidebar-menu {
     list-style: none;
-    padding: 10px 0;
+    padding: 15px;
     margin: 0;
 }
 
-.sidebar-menu a {
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a,
+.sidebar-menu a:visited {
     display: flex;
     align-items: center;
     color: var(--sidebar-text);
-    padding: 12px 25px;
+    padding: 10px 15px;
     text-decoration: none;
-    border-left: 5px solid transparent;
-    transition: all 0.3s ease;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     font-size: 15px;
+    opacity: 0.8;
 }
 
 .sidebar-menu a:hover {
-    background: #34495E;
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--white-color);
+    opacity: 1;
 }
 
 .sidebar-menu a.active {
-    background: var(--dark-color);
-    border-left-color: var(--primary-color);
-    color: var(--white-color);
+    background: var(--primary-color);
+    color: var(--sidebar-bg);
+    opacity: 1;
+    font-weight: 600;
+    border-left: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-menu a i {
@@ -240,20 +255,23 @@ a {
     align-items: center;
     background: var(--white-color);
     padding: 15px 30px;
-    border-bottom: 1px solid #E9ECEF;
-    box-shadow: var(--shadow-light);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 999;
 }
 
 .header-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--sidebar-bg);
 }
 
 .header-user {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
     font-weight: 400;
     color: var(--grey-color);
 }
@@ -263,113 +281,212 @@ a {
 }
 
 /* =================================
-   DASHBOARD & GENERAL CARD STYLES (Diperbarui)
+   DASHBOARD CARD STYLES
    ================================= */
 .stat-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    gap: 25px;
     margin-bottom: 30px;
 }
 
-.card {
+.stat-card {
     background: var(--white-color);
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #E9ECEF;
-    height: 100%;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card h4 {
-    margin-top: 0;
-    color: var(--grey-color);
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    color: var(--sidebar-bg);
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-title {
+    font-size: 13px;
     font-weight: 500;
-    font-size: 14px;
+    color: var(--grey-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
 }
 
-.card p {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 0;
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
     color: var(--dark-color);
+    line-height: 1.2;
 }
 
-.card-icon {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 60px;
-    color: var(--bg-color);
-    opacity: 0.8;
-}
-
-/* Gaya untuk Kartu Tawk.to */
-.card-link {
+.stat-card-link {
     text-decoration: none;
     color: inherit;
-    display: block;
-}
-
-.tawk-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.tawk-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.tawk-card .tawk-icon {
-    color: #4fa4d1;
-    opacity: 0.3;
-}
-
-.card-link:hover .tawk-card h4,
-.card-link:hover .tawk-card p {
-    color: var(--primary-color);
-}
-
-.chart-container {
-    background: var(--white-color);
-    padding: 30px;
-    margin-top: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid #E9ECEF;
-}
-
-.chart-container h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
 }
 
 /* =================================
-   GENERAL BUTTONS & FORMS
+   MODERN TABLE & CONTENT STYLES
    ================================= */
-.page-header {
+.page-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--sidebar-bg);
+    margin: 0 0 10px 0;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--grey-color);
+    background-color: transparent;
+    padding: 0;
+}
+.breadcrumb a {
+    color: var(--grey-color);
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    color: var(--dark-color);
+}
+
+.content-wrapper-card {
+    background-color: var(--white-color);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.page-header h2 {
+.card-title {
     margin: 0;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.item-count {
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #e9ecef;
+    color: var(--grey-color);
+    padding: 3px 8px;
+    border-radius: 50px;
+}
+
+.card-body.no-padding {
+    padding: 0;
+}
+
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-modern th,
+.table-modern td {
+    padding: 15px 25px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.table-modern tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-modern thead th {
+    font-weight: 500;
+    color: var(--grey-color);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-modern tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-modern tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table-modern img {
+    border-radius: 6px;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+}
+
+.table-modern .actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.action-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    color: var(--grey-color);
+    transition: color 0.2s ease;
+}
+
+.action-icon:hover {
+    color: var(--primary-color);
+}
+
+.action-icon .fa-trash:hover,
+.action-icon[title="Delete"]:hover {
+    color: var(--danger-color);
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px !important;
+    color: var(--grey-color);
 }
 
 .btn {
     padding: 8px 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
@@ -377,115 +494,18 @@ a {
     display: inline-block;
     text-align: center;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn:hover {
-    opacity: 0.95;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--white-color);
-}
-
-.btn-secondary {
-    background-color: var(--grey-color);
-    color: var(--white-color);
-}
-
-.btn-danger {
-    background-color: var(--danger-color);
-    color: var(--white-color);
-}
-
-.card-body {
-    padding: 25px;
-}
-
-/* Gaya Form */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="number"],
-.form-group input[type="password"],
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.form-group small {
-    color: var(--grey-color);
-    font-size: 12px;
-}
-
-/* Gaya Tabel */
-.table-products,
-.table-orders {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.table-products thead {
-    background-color: #E9ECEF;
-}
-
-.table-products th,
-.table-products td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
-    vertical-align: middle;
-}
-
-.table-products th {
+    color: var(--sidebar-bg);
     font-weight: 600;
-    color: var(--dark-color);
-    text-transform: uppercase;
-    font-size: 12px;
 }
 
-.table-products tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.table-products img {
-    border-radius: 4px;
-    object-fit: cover;
-    height: 50px;
-    width: 50px;
-}
-
-.table-products .actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.table-orders .form-control {
-    padding: 5px 8px;
-}
-
-.no-products {
-    text-align: center;
-    padding: 30px !important;
-    color: var(--grey-color);
+.btn-primary:hover {
+    background-color: #b38e4c;
+    color: var(--sidebar-bg);
+    box-shadow: 0 4px 10px rgba(197, 165, 101, 0.3);
+    transform: translateY(-2px);
 }

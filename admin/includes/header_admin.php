@@ -21,7 +21,7 @@ require_once '../includes/db_conn.php';
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-    </head>
+</head>
 <body>
     <div class="admin-wrapper">
         <aside class="sidebar">
@@ -41,9 +41,10 @@ require_once '../includes/db_conn.php';
 
         <main class="main-content">
             <header class="main-header">
-                <div class="header-title"></div>
+                <div class="header-title">
+                    </div>
                 <div class="header-user">
-                    <span>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                    <span>Sauvatte HQ</span>
                 </div>
             </header>
             <div class="content-body">

@@ -17,30 +17,48 @@ $total_users = $users_result ? $users_result->fetch_assoc()['count'] : 0;
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
 <div class="stat-cards">
-    <div class="card">
-        <h4>Total Orders</h4>
-        <p><?php echo $total_orders ?? 0; ?></p>
-        <i class="fas fa-shopping-cart card-icon"></i>
-    </div>
-    <div class="card">
-        <h4>Total Products</h4>
-        <p><?php echo $total_products ?? 0; ?></p>
-        <i class="fas fa-box card-icon"></i>
-    </div>
-    <div class="card">
-        <h4>Total Users</h4>
-        <p><?php echo $total_users ?? 0; ?></p>
-        <i class="fas fa-users card-icon"></i>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-title">Total Orders</span>
+            <span class="stat-value"><?php echo $total_orders ?? 0; ?></span>
+        </div>
     </div>
     
-    <a href="https://dashboard.tawk.to/" target="_blank" class="card-link" style="text-decoration:none;">
-        <div class="card tawk-card">
-            <h4>Tawk.to Dashboard</h4>
-            <p>Go to Chat</p>
-            <i class="tawk-icon card-icon" id="tawkIcon"></i> 
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-box"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-title">Total Products</span>
+            <span class="stat-value"><?php echo $total_products ?? 0; ?></span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-title">Total Users</span>
+            <span class="stat-value"><?php echo $total_users ?? 0; ?></span>
+        </div>
+    </div>
+    
+    <a href="https://dashboard.tawk.to/" target="_blank" class="stat-card-link">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-title">Tawk.to Dashboard</span>
+                <span class="stat-value">Go to Chat</span>
+            </div>
         </div>
     </a>
-    </div>
+</div>
 
 
 <?php include 'includes/footer_admin.php'; ?>
