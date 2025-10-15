@@ -2,6 +2,8 @@
 // Memulai dengan menyertakan header admin.
 include 'includes/header_admin.php';
 
+$page_title = "Manage Blog"; // Judul untuk header utama
+
 // Menentukan direktori untuk upload gambar
 $upload_dir = '../uploads/';
 
@@ -16,38 +18,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($_POST['action'] === 'update' && !empty($image_url) && file_exists($upload_dir . $image_url)) {
             unlink($upload_dir . $image_url);
         }
-        // Ambil nama asli dan bersihkan dari karakter aneh
         $original_name = basename($_FILES['image']['name']);
         $safe_name = preg_replace("/[^a-zA-Z0-9\._-]/", "_", $original_name);
-// Gabungkan dengan timestamp untuk menjadikannya unik
         $image_name = time() . '_' . $safe_name;
         $target_file = $upload_dir . $image_name;
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
             $image_url = $image_name;
         } else {
-            echo "<div class='alert alert-danger'>Gagal mengupload gambar.</div>";
+            echo "<div class='alert alert-danger'>Failed to upload image.</div>";
         }
     }
 
     if ($_POST['action'] === 'add') {
         $stmt = $conn->prepare("INSERT INTO blog (title, content, image_url, author_id) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("sssi", $title, $content, $image_url, $author_id);
-        if ($stmt->execute()) {
-            header('Location: manage_blog.php?status=added');
-        } else {
-            echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
-        }
+        $stmt->execute();
         $stmt->close();
+        header('Location: manage_blog.php?status=added');
     } elseif ($_POST['action'] === 'update') {
         $id = $_POST['id'];
         $stmt = $conn->prepare("UPDATE blog SET title = ?, content = ?, image_url = ?, author_id = ? WHERE id = ?");
         $stmt->bind_param("sssii", $title, $content, $image_url, $author_id, $id);
-        if ($stmt->execute()) {
-            header('Location: manage_blog.php?status=updated');
-        } else {
-            echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
-        }
+        $stmt->execute();
         $stmt->close();
+        header('Location: manage_blog.php?status=updated');
     }
     exit();
 }
@@ -69,27 +63,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
 
     $stmt_delete = $conn->prepare("DELETE FROM blog WHERE id = ?");
     $stmt_delete->bind_param("i", $id);
-    if ($stmt_delete->execute()) {
-        header('Location: manage_blog.php?status=deleted');
-    } else {
-        echo "<div class='alert alert-danger'>Error: " . $stmt_delete->error . "</div>";
-    }
+    $stmt_delete->execute();
     $stmt_delete->close();
+    header('Location: manage_blog.php?status=deleted');
     exit();
 }
 ?>
 
-<div class="content-header">
-    <h1>Manage Blog</h1>
-</div>
+<script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
 <?php
 if (isset($_GET['status'])) {
     $status = $_GET['status'];
     $message = '';
-    if ($status === 'added') $message = 'Blog post berhasil ditambahkan!';
-    if ($status === 'updated') $message = 'Blog post berhasil diperbarui!';
-    if ($status === 'deleted') $message = 'Blog post berhasil dihapus!';
+    if ($status === 'added') $message = 'Blog post added successfully!';
+    if ($status === 'updated') $message = 'Blog post updated successfully!';
+    if ($status === 'deleted') $message = 'Blog post deleted successfully!';
     echo "<div class='alert alert-success'>$message</div>";
 }
 
@@ -115,9 +104,9 @@ if ($action === 'add' || $action === 'edit') :
 ?>
     <div class="card">
         <div class="card-header">
-            <h2><?php echo $action === 'add' ? 'Add New Post' : 'Edit Post'; ?></h2>
+            <h4 class="card-title"><?php echo $action === 'add' ? 'Add New Post' : 'Edit Post'; ?></h4>
         </div>
-        <div class="card-body" style="padding: 25px;">
+        <div class="card-body">
             <form action="manage_blog.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="<?php echo $form_action; ?>">
                 <?php if ($action === 'edit') : ?>
@@ -132,14 +121,14 @@ if ($action === 'add' || $action === 'edit') :
 
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea id="content" name="content" rows="10"><?php echo $post['content'] ?? ''; ?></textarea>
+                    <textarea class="form-control" id="content" name="content" rows="10"><?php echo htmlspecialchars($post['content'] ?? ''); ?></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="image">Image</label>
                     <input type="file" id="image" name="image" accept="image/*" class="form-control-file">
                     <?php if ($action === 'edit' && !empty($post['image_url'])) : ?>
-                        <p class="mt-2">Current Image: <br><img src="<?php echo $upload_dir . htmlspecialchars($post['image_url']); ?>" alt="Current Image" width="150"></p>
+                        <p class="mt-2">Current Image: <br><img src="<?php echo $upload_dir . htmlspecialchars($post['image_url']); ?>" alt="Current Image" width="150" style="border-radius: 8px;"></p>
                     <?php endif; ?>
                 </div>
 
@@ -152,15 +141,15 @@ if ($action === 'add' || $action === 'edit') :
     </div>
 
 <?php else : ?>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2>Blog Posts</h2>
+    <div class="content-wrapper-card">
+        <div class="card-header">
+            <h2 class="card-title">Blog Posts</h2>
             <a href="manage_blog.php?action=add" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Post
             </a>
         </div>
-        <div class="card-body">
-            <table class="table table-striped">
+        <div class="card-body no-padding">
+            <table class="table-modern">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -174,17 +163,17 @@ if ($action === 'add' || $action === 'edit') :
                     <?php
                     $result = $conn->query("SELECT id, title, image_url, created_at FROM blog ORDER BY created_at DESC");
                     if ($result->num_rows > 0) :
-                        $count = 1;
+                        $count = $result->num_rows;
                         while ($row = $result->fetch_assoc()) :
                     ?>
                             <tr>
-                                <td><?php echo $count++; ?></td>
-                                <td><img src="<?php echo $upload_dir . rawurlencode(htmlspecialchars($row['image_url'])); ?>" alt="Blog Image" width="100"></td>
+                                <td><?php echo str_pad($count--, 2, '0', STR_PAD_LEFT); ?></td>
+                                <td><img src="<?php echo $upload_dir . rawurlencode(htmlspecialchars($row['image_url'])); ?>" alt="Blog Image"></td>
                                 <td><?php echo htmlspecialchars($row['title']); ?></td>
                                 <td><?php echo date('d M Y, H:i', strtotime($row['created_at'])); ?></td>
                                 <td class="actions">
-                                    <a href="manage_blog.php?action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                    <a href="manage_blog.php?action=delete&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus post ini?');"><i class="fas fa-trash"></i> Delete</a>
+                                    <a href="manage_blog.php?action=edit&id=<?php echo $row['id']; ?>" class="action-icon" title="Edit"><i class="fas fa-pen"></i></a>
+                                    <a href="manage_blog.php?action=delete&id=<?php echo $row['id']; ?>" class="action-icon" title="Delete" onclick="return confirm('Are you sure you want to delete this post?');"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                     <?php
@@ -192,7 +181,7 @@ if ($action === 'add' || $action === 'edit') :
                     else :
                     ?>
                         <tr>
-                            <td colspan="5" class="text-center">No blog posts found.</td>
+                            <td colspan="5" class="no-data">No blog posts found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

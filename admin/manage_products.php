@@ -9,14 +9,29 @@ $product_count = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
-<div class="breadcrumb">
-    <a href="index.php">Home</a> &gt; Products
-</div>
+<?php
+// AWAL KODE YANG DIPERBARUI: Blok untuk menampilkan notifikasi dalam Bahasa Inggris
+if (isset($_GET['status'])) {
+    $message = '';
+    if ($_GET['status'] == 'add_success') {
+        $message = 'Product added successfully!';
+    } elseif ($_GET['status'] == 'edit_success') {
+        $message = 'Product updated successfully!';
+    } elseif ($_GET['status'] == 'delete_success') {
+        $message = 'Product deleted successfully!';
+    }
+
+    if ($message) {
+        echo "<div class='alert alert-success'>{$message}</div>";
+    }
+}
+// AKHIR KODE YANG DIPERBARUI
+?>
 
 <div class="content-wrapper-card">
     <div class="card-header">
         <h2 class="card-title">Products <span class="item-count"><?php echo $product_count; ?></span></h2>
-        <a href="add_product.php" class="btn btn-primary">+ Create New</a>
+        <a href="add_product.php" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
     </div>
 
     <div class="card-body no-padding">

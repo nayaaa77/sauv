@@ -4,7 +4,7 @@
 
 /* Reset & Variabel */
 :root {
-    --primary-color: #C5A565;
+    --primary-color: #007bff; /* Warna utama diubah menjadi biru */
     --sidebar-bg: #3D2B1F;
     --bg-color: #FBF9F1;
     --dark-color: #212529;
@@ -130,7 +130,7 @@ a {
 }
 
 .btn-login:hover {
-    background-color: #b38e4c;
+    background-color: #0056b3;
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
@@ -229,7 +229,7 @@ a {
 }
 
 .sidebar-menu a.active {
-    background: var(--primary-color);
+    background: #C5A565;
     color: var(--sidebar-bg);
     opacity: 1;
     font-weight: 600;
@@ -483,29 +483,386 @@ a {
     color: var(--grey-color);
 }
 
+/* --- PERUBAHAN PADA TOMBOL --- */
 .btn {
     padding: 8px 15px;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
     font-weight: 500;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     text-align: center;
     transition: all 0.2s ease;
     box-shadow: none;
+    border-radius: 50px; /* Diubah menjadi bentuk oval/kapsul */
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--sidebar-bg);
+    color: var(--white-color);
     font-weight: 600;
+    padding: 8px 20px;
 }
 
 .btn-primary:hover {
-    background-color: #b38e4c;
-    color: var(--sidebar-bg);
-    box-shadow: 0 4px 10px rgba(197, 165, 101, 0.3);
+    background-color: #0056b3; /* Warna hover digelapkan */
+    color: var(--white-color);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
     transform: translateY(-2px);
+}
+/* --- AKHIR PERUBAHAN --- */
+
+/* =================================
+   FORM LAYOUT & STYLING BARU
+   ================================= */
+.form-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.form-column-main {
+    flex: 2;
+    min-width: 400px;
+}
+
+.form-column-side {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.card {
+    background-color: var(--white-color);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.card .card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+}
+
+.card .card-header .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card .card-body {
+    padding: 20px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+/* --- Image Upload Box --- */
+.image-upload-box {
+    position: relative;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.image-upload-box:hover {
+    border-color: var(--primary-color);
+}
+
+.image-upload-box input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-placeholder i {
+    font-size: 32px;
+    color: #adb5bd;
+}
+
+.upload-placeholder p {
+    margin: 10px 0 0;
+    color: #6c757d;
+}
+
+.image-preview-container {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.image-preview-item {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Toggle Switch --- */
+.form-group-switch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+/* Menggunakan kembali style Summernote dari Bootstrap */
+.note-editor.note-frame {
+    border: 1px solid #ced4da;
+    box-shadow: none;
+}
+
+/* =================================
+   EDIT PRODUCT PAGE STYLING
+   ================================= */
+.image-preview-item.existing {
+    position: relative;
+}
+
+.delete-image-label {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.delete-image-label:hover {
+    transform: scale(1.1);
+}
+
+.delete-image-label input[type="checkbox"] {
+    display: none; /* Sembunyikan checkbox asli */
+}
+
+/* Ubah tampilan saat checkbox dicentang */
+.delete-image-label input[type="checkbox"]:checked + i {
+    display: none; /* Sembunyikan ikon 'x' */
+}
+.image-preview-item.existing input[type="checkbox"]:checked ~ img {
+    opacity: 0.3; /* Buat gambar menjadi transparan */
+}
+.image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label::after {
+    content: '\f00c'; /* Kode ikon centang Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: white;
+}
+.image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label {
+    background-color: #28a745; /* Ubah background menjadi hijau */
+}
+
+/* =================================
+   ALERT / NOTIFICATION STYLES
+   ================================= */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+    border-radius: .5rem; /* Sudut sedikit membulat */
+    font-weight: 500;
+}
+
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+.alert-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+/* =================================
+   MANAGE ORDERS PAGE STYLING
+   ================================= */
+.table-modern .text-right {
+    text-align: right;
+}
+
+.table-modern .actions {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* Styling untuk form di dalam tabel */
+.form-control-sm {
+    display: block;
+    width: 100%;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .2rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    min-width: 180px;
+}
+
+.btn-sm {
+    padding: .25rem .75rem;
+    font-size: .875rem;
+    border-radius: 50px;
+}
+
+/* Styling untuk Status Badge */
+.status-badge {
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-weight: 600;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-position: right 8px center;
+    background-repeat: no-repeat;
+    background-size: 12px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.status-badge:focus {
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+.status-confirmed {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+.status-shipped {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+.status-completed {
+    background-color: #e2e3e5;
+    color: #41464b;
+}
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* =================================
+   SETTINGS PAGE STYLING
+   ================================= */
+.settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    gap: 30px;
+}
+
+.settings-container .card .card-body form {
+    max-width: 500px;
 }

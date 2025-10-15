@@ -118,11 +118,11 @@ include 'includes/db_conn.php';
                             </div>
                             <div class="tab-content">
                                 <div id="description" class="tab-pane active">
-                                    <p><?php echo nl2br(htmlspecialchars($product_data['description'])); ?></p>
+                                    <?php echo nl2br($product_data['description']); ?>
                                 </div>
                                 <div id="additional-info" class="tab-pane">
                                     <?php if (!empty($product_data['additional_info'])): ?>
-                                        <p><?php echo nl2br(htmlspecialchars($product_data['additional_info'])); ?></p>
+                                        <?php echo nl2br($product_data['additional_info']); ?>
                                     <?php else: ?>
                                         <p>Tidak ada informasi tambahan untuk produk ini.</p>
                                     <?php endif; ?>
