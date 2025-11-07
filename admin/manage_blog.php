@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 
     if ($_POST['action'] === 'add') {
-        $stmt = $conn->prepare("INSERT INTO blog (title, content, image_url, author_id) VALUES (?, ?, ?, ?)");
+        // Tambahkan is_pinned = 0 secara default
+        $stmt = $conn->prepare("INSERT INTO blog (title, content, image_url, author_id, is_pinned) VALUES (?, ?, ?, ?, 0)");
         $stmt->bind_param("sssi", $title, $content, $image_url, $author_id);
         $stmt->execute();
         $stmt->close();
@@ -68,6 +69,37 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     header('Location: manage_blog.php?status=deleted');
     exit();
 }
+
+// ------------------------------------------------------------------
+// BARU: Logika Pin/Unpin
+// ------------------------------------------------------------------
+if (isset($_GET['action']) && ($_GET['action'] === 'pin' || $_GET['action'] === 'unpin') && isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $action_type = $_GET['action'];
+
+    if ($action_type === 'pin') {
+        // 1. Unpin semua post yang ada (memastikan hanya 1 yang di-pin)
+        $conn->query("UPDATE blog SET is_pinned = 0");
+
+        // 2. Pin post yang dipilih
+        $stmt_pin = $conn->prepare("UPDATE blog SET is_pinned = 1 WHERE id = ?");
+        $stmt_pin->bind_param("i", $id);
+        $stmt_pin->execute();
+        $stmt_pin->close();
+        header('Location: manage_blog.php?status=pinned');
+    } elseif ($action_type === 'unpin') {
+        // 1. Unpin post yang dipilih
+        $stmt_unpin = $conn->prepare("UPDATE blog SET is_pinned = 0 WHERE id = ?");
+        $stmt_unpin->bind_param("i", $id);
+        $stmt_unpin->execute();
+        $stmt_unpin->close();
+        header('Location: manage_blog.php?status=unpinned');
+    }
+    exit();
+}
+// ------------------------------------------------------------------
+
+
 ?>
 
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
@@ -79,6 +111,9 @@ if (isset($_GET['status'])) {
     if ($status === 'added') $message = 'Blog post added successfully!';
     if ($status === 'updated') $message = 'Blog post updated successfully!';
     if ($status === 'deleted') $message = 'Blog post deleted successfully!';
+    // BARU: Pesan status Pin/Unpin
+    if ($status === 'pinned') $message = 'Blog post has been pinned successfully! 📌';
+    if ($status === 'unpinned') $message = 'Blog post has been unpinned successfully.';
     echo "<div class='alert alert-success'>$message</div>";
 }
 
@@ -161,22 +196,39 @@ if ($action === 'add' || $action === 'edit') :
                 </thead>
                 <tbody>
                     <?php
-                    $result = $conn->query("SELECT id, title, image_url, created_at FROM blog ORDER BY created_at DESC");
+                    // BARU: Mengambil kolom is_pinned dan mengurutkan berdasarkan is_pinned (post yang di-pin di atas)
+                    $result = $conn->query("SELECT id, title, image_url, created_at, is_pinned FROM blog ORDER BY is_pinned DESC, created_at DESC");
                     if ($result->num_rows > 0) :
-                        $count = $result->num_rows;
+                        $nomor = 1; // Inisialisasi penghitung
                         while ($row = $result->fetch_assoc()) :
                     ?>
                             <tr>
-                                <td><?php echo str_pad($count--, 2, '0', STR_PAD_LEFT); ?></td>
+                                <td><?php echo $nomor; ?></td>
                                 <td><img src="<?php echo $upload_dir . rawurlencode(htmlspecialchars($row['image_url'])); ?>" alt="Blog Image"></td>
-                                <td><?php echo htmlspecialchars($row['title']); ?></td>
+                                <td>
+                                    <?php echo htmlspecialchars($row['title']); ?>
+                                    <?php if ($row['is_pinned']) : ?>
+                                        <span class="badge badge-warning" style="background-color:#ffc107; color: #333; margin-left: 5px; font-weight: 600;">📌 Pinned</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?php echo date('d M Y, H:i', strtotime($row['created_at'])); ?></td>
                                 <td class="actions">
+                                    
+                                    <?php if ($row['is_pinned']) : ?>
+                                        <a href="manage_blog.php?action=unpin&id=<?php echo $row['id']; ?>" class="action-icon" title="Unpin Post" onclick="return confirm('Apakah Anda yakin ingin melepas pin post ini?');" style="color: #ffc107;">
+                                            <i class="fas fa-thumbtack"></i>
+                                        </a>
+                                    <?php else : ?>
+                                        <a href="manage_blog.php?action=pin&id=<?php echo $row['id']; ?>" class="action-icon" title="Pin Post" onclick="return confirm('Apakah Anda yakin ingin menyematkan post ini? Ini akan melepas pin dari post lain (jika ada).');" style="color: #6c757d;">
+                                            <i class="fas fa-thumbtack"></i>
+                                        </a>
+                                    <?php endif; ?>
                                     <a href="manage_blog.php?action=edit&id=<?php echo $row['id']; ?>" class="action-icon" title="Edit"><i class="fas fa-pen"></i></a>
                                     <a href="manage_blog.php?action=delete&id=<?php echo $row['id']; ?>" class="action-icon" title="Delete" onclick="return confirm('Are you sure you want to delete this post?');"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                     <?php
+                            $nomor++; // Tambahkan 1 ke penghitung setiap loop
                         endwhile;
                     else :
                     ?>

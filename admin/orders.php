@@ -54,11 +54,11 @@ if (isset($_GET['status']) && $_GET['status'] == 'update_success') {
             </thead>
             <tbody>
                 <?php if ($orders_result && $orders_result->num_rows > 0): ?>
+                    <?php $nomor = 1; // 1. BARIS BARU: Inisialisasi penghitung ?>
                     <?php while($order = $orders_result->fetch_assoc()): ?>
                         <tr>
                             <form action="orders.php" method="POST">
-                                <td>#<?php echo $order['id']; ?></td>
-                                <td><?php echo htmlspecialchars($order['full_name'] ?? 'Guest'); ?></td>
+                                <td><?php echo $nomor; ?></td> <td><?php echo htmlspecialchars($order['full_name'] ?? 'Guest'); ?></td>
                                 <td><?php echo date('d M Y', strtotime($order['order_date'])); ?></td>
                                 <td>Rp <?php echo number_format($order['total_amount']); ?></td>
                                 <td>
@@ -76,9 +76,11 @@ if (isset($_GET['status']) && $_GET['status'] == 'update_success') {
                                 <td class="actions text-right">
                                     <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
                                     <button type="submit" name="update_order" class="btn btn-primary btn-sm">Update</button>
+
                                 </td>
                             </form>
                         </tr>
+                    <?php $nomor++; // 3. BARIS BARU: Tambahkan 1 ke penghitung setiap loop ?>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>

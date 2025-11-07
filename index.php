@@ -39,7 +39,9 @@ if (isset($_SESSION['flash_message'])) {
                 <img src="assets/img/<?php echo htmlspecialchars($hero_product['image_url']); ?>" alt="<?php echo htmlspecialchars($hero_product['name']); ?>" class="hero-banner-image">
                 <div class="hero-banner-overlay">
                     <h1 class="hero-banner-title"><?php echo htmlspecialchars($hero_product['name']); ?></h1>
-                    <p class="hero-banner-desc"><?php echo htmlspecialchars(substr($hero_product['description'], 0, 100)) . '...'; ?></p>
+                    
+                    <p class="hero-banner-desc"><?php echo htmlspecialchars(substr(strip_tags($hero_product['description']), 0, 100)) . '...'; ?></p>
+                    
                     <span class="hero-banner-cta">Shop Now</span>
                 </div>
             </a>
@@ -61,7 +63,7 @@ if (isset($_SESSION['flash_message'])) {
             <div class="product-grid">
                 <?php
                 // Ambil 6 produk terbaru
-                $result = $conn->query("SELECT * FROM products ORDER BY created_at DESC LIMIT 6");
+                $result = $conn->query("SELECT * FROM products ORDER BY created_at DESC LIMIT 4");
                 while ($row = $result->fetch_assoc()):
                 ?>
                 <div class="product-card">

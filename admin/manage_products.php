@@ -50,12 +50,13 @@ if (isset($_GET['status'])) {
                 <?php
                 $result = $conn->query("SELECT * FROM products ORDER BY id DESC");
                 if ($result && $result->num_rows > 0):
-                    $counter = $result->num_rows;
+                    
+                    $nomor = 1; // 1. BARIS BARU: Inisialisasi penghitung
+                    
                     while ($row = $result->fetch_assoc()):
                 ?>
                 <tr>
-                    <td><?php echo str_pad($counter--, 2, '0', STR_PAD_LEFT); ?></td>
-                    <td><img src="../assets/img/<?php echo htmlspecialchars($row['image_url']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>"></td>
+                    <td><?php echo $nomor; ?></td> <td><img src="../assets/img/<?php echo htmlspecialchars($row['image_url']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>"></td>
                     <td><?php echo htmlspecialchars($row['name']); ?></td>
                     <td>Rp <?php echo number_format($row['price']); ?></td>
                     <td><?php echo $row['stock']; ?></td>
@@ -68,6 +69,7 @@ if (isset($_GET['status'])) {
                     </td>
                 </tr>
                 <?php
+                    $nomor++; // 3. BARIS BARU: Tambahkan 1 ke penghitung setiap loop
                     endwhile;
                 else:
                 ?>

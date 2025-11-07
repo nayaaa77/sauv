@@ -13,6 +13,8 @@
                 </div>
                 <div class="footer-social">
                     <a href="https://www.instagram.com/sauvatte?igsh=dmRucWZ2MjV3OTVr" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    
+                    <a href="https://www.tiktok.com/@sauvatte?_t=ZS-90jpTCoSnqv&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
@@ -21,8 +23,7 @@
 
     <script src="assets/js/main.js"></script>
 
- <!--Start of Tawk.to Script-->
-<script type="text/javascript">
+ <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
@@ -33,6 +34,5 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
-    </body>
+</body>
 </html>
