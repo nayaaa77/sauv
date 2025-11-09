@@ -12,6 +12,8 @@ if (!is_logged_in()) {
 // Ambil ID pesanan dari URL dan pastikan itu milik user yang sedang login
 $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $user_id = $_SESSION['user_id'];
+
+// Cek apakah ada parameter 'confirm' di URL untuk menampilkan pesan sukses
 $show_confirmation_message = isset($_GET['confirm']) && $_GET['confirm'] === 'true';
 
 if ($order_id === 0) {
@@ -20,7 +22,7 @@ if ($order_id === 0) {
     exit();
 }
 
-// 1. Ambil data pesanan utama dan data user
+// Ambil data pesanan utama dan data user
 $stmt_order = $conn->prepare(
     "SELECT o.*, u.email, u.full_name, a.phone
      FROM orders o
@@ -39,7 +41,10 @@ if (!$order) {
     exit();
 }
 
-// 2. Ambil item-item dalam pesanan
+// Format alamat pengiriman yang disimpan dengan format multiline
+$formatted_address = nl2br(htmlspecialchars($order['shipping_address']));
+
+// Ambil item-item dalam pesanan
 $stmt_items = $conn->prepare(
     "SELECT oi.quantity, oi.price_per_item, p.name
      FROM order_items oi
@@ -56,8 +61,12 @@ $stmt_items->close();
 <div class="container order-detail-container">
     
     <?php if ($show_confirmation_message): ?>
-    <div class="notification success">
-        <strong>Thank You for Your Order!</strong> We've successfully received it and are getting it ready for you.
+    <div class="notification brand" id="order-notification">
+        <i class="fas fa-check-circle"></i>
+        <span>
+            <strong>Thank you for your order!</strong> We've received it and are getting it ready for you.
+        </span>
+        <button class="close-btn" aria-label="Close">&times;</button>
     </div>
     <?php endif; ?>
 
@@ -67,7 +76,7 @@ $stmt_items->close();
             <div class="details-grid">
                 <div class="detail-item">
                     <span>ORDER NUMBER</span>
-                    <p><?php echo $order['id']; ?></p>
+                    <p>#<?php echo $order['id']; ?></p>
                 </div>
                 <div class="detail-item">
                     <span>EMAIL</span>
@@ -75,25 +84,17 @@ $stmt_items->close();
                 </div>
                 <div class="detail-item">
                     <span>PAYMENT METHOD</span>
-                    <p>Virtual Account</p>
+                    <p>Midtrans Payment Gateway</p>
                 </div>
                 <div class="detail-item">
                     <span>ORDER DATE</span>
                     <p><?php echo date('F j, Y', strtotime($order['order_date'])); ?></p>
                 </div>
-                <div class="detail-item">
-                    <span>DELIVERY OPTIONS</span>
-                    <p>Standard Delivery</p>
-                </div>
-                <div class="detail-item">
-                    <span>CONTACT NUMBER</span>
-                    <p><?php echo htmlspecialchars($order['phone'] ?? 'N/A'); ?></p>
-                </div>
-                <div class="detail-item full-width">
+                <div class="detail-item new-full-width">
                     <span>DELIVERY ADDRESS</span>
-                    <p><?php echo htmlspecialchars($order['shipping_address']); ?></p>
+                    <p><?php echo $formatted_address; ?></p>
                 </div>
-                <div class="detail-item full-width tracking-detail">
+                <div class="detail-item new-full-width tracking-detail">
                     <span>TRACKING NUMBER</span>
                     <?php if (!empty($order['resi_number'])): ?>
                         <p class="tracking-number">
@@ -118,7 +119,7 @@ $stmt_items->close();
                     $subtotal += $item_total;
                 ?>
                 <div class="summary-product-row">
-                    <span><?php echo htmlspecialchars($item['name']); ?></span>
+                    <span><?php echo htmlspecialchars($item['name']); ?> (x<?php echo $item['quantity']; ?>)</span>
                     <span>Rp <?php echo number_format($item_total); ?></span>
                 </div>
                 <?php endforeach; ?>

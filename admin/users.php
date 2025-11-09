@@ -52,10 +52,10 @@ if (isset($_GET['status']) && $_GET['status'] == 'delete_success') {
             </thead>
             <tbody>
                 <?php if ($users_result && $users_result->num_rows > 0): ?>
+                    <?php $nomor = 1; // 1. BARIS BARU: Inisialisasi penghitung ?>
                     <?php while($user = $users_result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $user['id']; ?></td>
-                            <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                            <td><?php echo $nomor; ?></td> <td><?php echo htmlspecialchars($user['full_name']); ?></td>
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                             <td><?php echo date('d M Y, H:i', strtotime($user['created_at'])); ?></td>
                             <td class="actions">
@@ -67,6 +67,7 @@ if (isset($_GET['status']) && $_GET['status'] == 'delete_success') {
                                 </form>
                             </td>
                         </tr>
+                    <?php $nomor++; // 3. BARIS BARU: Tambahkan 1 ke penghitung setiap loop ?>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>

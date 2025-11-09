@@ -1150,3 +1150,225 @@ a {
 .cart-icon-wrapper.updated {
   animation: cart-pop-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
+
+/*
+==============================================
+  MY ORDERS & ORDER DETAIL STYLING (FINAL)
+==============================================
+*/
+
+/* --- My Orders Table --- */
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.orders-table th {
+    text-align: left;
+    padding: 15px 0;
+    font-weight: 500;
+    color: #111;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #111;
+}
+
+.orders-table td {
+    padding: 20px 0;
+    border-bottom: 1px solid #e5e5e5;
+    vertical-align: top;
+    color: #555;
+}
+
+.orders-table .btn-view {
+    color: #C5A565; /* Warna Emas/Krem untuk link View */
+    font-weight: 500;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.orders-table .btn-view:hover {
+    color: #111;
+}
+
+.orders-table .tracking-number a {
+    text-decoration: underline;
+    color: #555;
+}
+
+/* --- Order Detail Layout --- */
+.order-detail-layout {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 40px;
+    align-items: stretch;
+}
+
+.order-details-card,
+.order-summary-card {
+    padding: 30px;
+    border-radius: 4px;
+    height: fit-content;
+}
+
+.order-details-card {
+    flex: 2;
+    background-color: #fcfcfc; /* Warna putih untuk Order Details */
+    border: 1px solid #eee;
+}
+
+.order-summary-card {
+    flex: 1;
+    /* WARNA ABU-ABU YANG DIMINTA */
+    background-color: #f2f2f2; 
+}
+
+.order-details-card h2,
+.order-summary-card h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+}
+
+.detail-item span {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.detail-item p {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    color: #111;
+}
+
+/* Kelas baru untuk Address dan Tracking Number agar span penuh */
+.detail-item.new-full-width {
+    grid-column: 1 / -1; 
+    margin-top: 10px;
+}
+
+.summary-items {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.summary-product-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.summary-totals .summary-total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+    /* Latar belakang abu-abu untuk subtotal dan shipping */
+    background-color: #f2f2f2; 
+    padding: 5px 0;
+}
+
+.summary-totals .final-total {
+    font-weight: bold;
+    font-size: 18px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+    /* Memastikan Total Akhir tidak memiliki latar belakang yang menimpa */
+    background-color: transparent !important; 
+}
+
+.back-to-orders {
+    margin-top: 20px;
+}
+
+.back-to-orders a {
+    color: #555;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/* Responsive adjustments for Order Detail */
+@media (max-width: 768px) {
+    .order-detail-layout {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    /* Pastikan span penuh juga hanya 1 kolom saat mobile */
+    .detail-item.new-full-width {
+        grid-column: 1 / -1; 
+    }
+}
+
+/*
+==============================================
+  CUSTOM BRAND NOTIFICATION
+==============================================
+*/
+.notification.brand {
+    background-color: #111; /* Latar belakang hitam */
+    color: #fff; /* Teks putih */
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.notification.brand.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.notification.brand .fa-check-circle {
+    font-size: 20px;
+    margin-right: 15px;
+    color: #C5A565; /* Warna emas/krem yang Anda gunakan */
+}
+
+.notification.brand span {
+    flex-grow: 1;
+}
+
+.notification.brand .close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    opacity: 0.7;
+    cursor: pointer;
+    padding: 0 0 0 15px;
+    line-height: 1;
+}
+
+.notification.brand .close-btn:hover {
+    opacity: 1;
+}

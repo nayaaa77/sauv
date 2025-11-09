@@ -41,10 +41,10 @@ require_once '../includes/db_conn.php';
 
         <main class="main-content">
             <header class="main-header">
-                <div class="header-title">
-                    </div>
+                <div class="header-title"></div>
                 <div class="header-user">
-                    <span>Sauvatte HQ</span>
+                    
+<span>Sauvatte HQ</span>
                 </div>
             </header>
             <div class="content-body">

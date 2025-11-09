@@ -1,8 +1,8 @@
 <?php
 // Ganti nilai ini sesuai dengan konfigurasi database Anda
 define('DB_HOST', 'localhost');
-define('DB_USER', 'test');
-define('DB_PASS', 'admin');
+define('DB_USER', 'root');
+define('DB_PASS', 'admin123');
 define('DB_NAME', 'sauv');
 
 // Membuat koneksi

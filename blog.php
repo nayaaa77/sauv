@@ -4,8 +4,8 @@ include 'includes/header.php';
 // Sertakan file koneksi database
 require_once 'includes/db_conn.php';
 
-// Query untuk mengambil semua data dari tabel blog, diurutkan dari yang terbaru
-$result = $conn->query("SELECT id, title, content, created_at, image_url FROM blog ORDER BY created_at DESC");
+// Urutkan berdasarkan status 'pin' (DESC agar 1 duluan), LALU urutkan berdasarkan tanggal terbaru
+$result = $conn->query("SELECT id, title, content, created_at, image_url FROM blog ORDER BY is_pinned DESC, created_at DESC");
 
 $posts = [];
 if ($result && $result->num_rows > 0) {

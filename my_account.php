@@ -3,6 +3,7 @@
 session_start();
 require_once 'includes/db_conn.php';
 require_once 'includes/functions.php';
+require_once 'config.php'; // ⚠️ DITAMBAHKAN: Memuat API Key
 
 // --- KEAMANAN HALAMAN ---
 if (!is_logged_in()) {
@@ -15,7 +16,7 @@ $page = $_GET['page'] ?? 'orders'; // Halaman default adalah 'orders'
 $notification = '';
 $notification_type = 'success';
 
-// --- LOGIKA UNTUK UPDATE ACCOUNT DETAILS ---
+// --- LOGIKA UNTUK UPDATE ACCOUNT DETAILS (KODE ASLI ANDA - TIDAK DIUBAH) ---
 if ($page === 'details' && isset($_POST['save_details'])) {
     $full_name = $_POST['display_name'] ?? '';
 
@@ -31,8 +32,9 @@ if ($page === 'details' && isset($_POST['save_details'])) {
     $stmt->close();
 }
 
-// --- LOGIKA UNTUK UPDATE PASSWORD ---
+// --- LOGIKA UNTUK UPDATE PASSWORD (KODE ASLI ANDA - TIDAK DIUBAH) ---
 if ($page === 'details' && isset($_POST['save_password'])) {
+    // ... (Logika ganti password Anda tetap di sini) ...
     $current_password = $_POST['current_password'];
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
@@ -67,31 +69,64 @@ if ($page === 'details' && isset($_POST['save_password'])) {
     }
 }
 
-// --- LOGIKA UNTUK UPDATE ADDRESS ---
 if ($page === 'addresses' && isset($_POST['save_address'])) {
+    
+    // Ambil data teks dari dropdown (untuk disimpan di kolom lama)
+    $province = $_POST['province_text'] ?? ''; 
+    $city = $_POST['city_text'] ?? '';
+    $sub_district = $_POST['sub_district_text'] ?? '';
+    
+    // Ambil ID dari dropdown (untuk disimpan di kolom BARU)
+    $province_id = $_POST['province_select'] ?? null;
+    $city_id = $_POST['city_select'] ?? null;
+    $district_id = $_POST['district_select'] ?? null;
+    
+    // Ambil data teks lainnya
     $first_name = $_POST['first_name'] ?? '';
     $last_name = $_POST['last_name'] ?? '';
     $address_line1 = $_POST['address_line1'] ?? '';
-    $city = $_POST['city'] ?? '';
-    $sub_district = $_POST['sub_district'] ?? '';
-    $province = $_POST['province'] ?? '';
     $postal_code = $_POST['postal_code'] ?? '';
     $phone = $_POST['phone'] ?? '';
-    $country = 'Indonesia'; // Nilai default
-    $house_number = null; // Set house_number ke NULL
+    $country = 'Indonesia'; // Nilai default dari kode lama
+    $house_number = null; // Nilai default dari kode lama
     
+    // Cek apakah user sudah punya alamat (UPDATE) atau belum (INSERT)
     $stmt_check = $conn->prepare("SELECT id FROM addresses WHERE user_id = ?");
     $stmt_check->bind_param("i", $user_id);
     $stmt_check->execute();
-    $result_check = $stmt_check->get_result();
+    $result = $stmt_check->get_result();
+    $existing_address = $result->fetch_assoc();
     $stmt_check->close();
 
-    if ($result_check->num_rows > 0) {
-        $stmt = $conn->prepare("UPDATE addresses SET first_name=?, last_name=?, address_line1=?, house_number=?, city=?, sub_district=?, province=?, postal_code=?, country=?, phone=? WHERE user_id=?");
-        $stmt->bind_param("ssssssssssi", $first_name, $last_name, $address_line1, $house_number, $city, $sub_district, $province, $postal_code, $country, $phone, $user_id);
+    if ($existing_address) {
+        // --- UPDATE ALAMAT ---
+        $stmt = $conn->prepare("UPDATE addresses SET 
+            first_name = ?, last_name = ?, address_line1 = ?, house_number = ?,
+            province = ?, city = ?, sub_district = ?, postal_code = ?, phone = ?, country = ?,
+            province_id = ?, city_id = ?, district_id = ?
+            WHERE user_id = ?");
+        
+        // ⚠️ PERBAIKAN: 14 Tipe ("ssssssssssiiii") dan 14 Variabel
+        $stmt->bind_param("ssssssssssiiii", 
+            $first_name, $last_name, $address_line1, $house_number,
+            $province, $city, $sub_district, $postal_code, $phone, $country,
+            $province_id, $city_id, $district_id,
+            $user_id
+        );
     } else {
-        $stmt = $conn->prepare("INSERT INTO addresses (user_id, first_name, last_name, address_line1, house_number, city, sub_district, province, postal_code, country, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("issssssssss", $user_id, $first_name, $last_name, $address_line1, $house_number, $city, $sub_district, $province, $postal_code, $country, $phone);
+        // --- INSERT ALAMAT BARU ---
+        $stmt = $conn->prepare("INSERT INTO addresses 
+            (user_id, first_name, last_name, address_line1, house_number,
+            province, city, sub_district, postal_code, phone, country,
+            province_id, city_id, district_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"); // 14 placeholders
+        
+        // ⚠️ PERBAIKAN: 14 Tipe ("issssssssssiii") dan 14 Variabel
+        $stmt->bind_param("issssssssssiii", 
+            $user_id, $first_name, $last_name, $address_line1, $house_number,
+            $province, $city, $sub_district, $postal_code, $phone, $country,
+            $province_id, $city_id, $district_id
+        );
     }
     
     if ($stmt->execute()) {
@@ -104,7 +139,7 @@ if ($page === 'addresses' && isset($_POST['save_address'])) {
 }
 
 
-// --- PENGAMBILAN DATA ---
+// --- PENGAMBILAN DATA (KODE ASLI ANDA - TIDAK DIUBAH) ---
 $orders = [];
 $address = null;
 $account_details = null;
@@ -202,26 +237,30 @@ $conn->close();
                     <label for="address_line1">Full Address</label>
                     <input type="text" id="address_line1" name="address_line1"  value="<?php echo htmlspecialchars($address['address_line1'] ?? ''); ?>" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="province">State / Province <span class="label-translation">(Provinsi)</span></label>
-                    <input type="text" id="province" name="province" value="<?php echo htmlspecialchars($address['province'] ?? ''); ?>" required>
+                    <label for="province_select">State / Province <span class="label-translation">(Provinsi)</span></label>
+                    <select id="province_select" name="province_select" required></select>
+                    <input type="hidden" id="province_text" name="province_text" value="">
                 </div>
                 <div class="form-group">
-                    <label for="city">City / Town <span class="label-translation">(Kota/Kabupaten)</span></label>
-                    <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($address['city'] ?? ''); ?>" required>
+                    <label for="city_select">City / Town <span class="label-translation">(Kota/Kabupaten)</span></label>
+                    <select id="city_select" name="city_select" required disabled></select>
+                    <input type="hidden" id="city_text" name="city_text" value="">
                 </div>
                 <div class="form-group">
-                    <label for="sub_district">Sub-District <span class="label-translation">(Kecamatan)</span></label>
-                    <input type="text" id="sub_district" name="sub_district" value="<?php echo htmlspecialchars($address['sub_district'] ?? ''); ?>" required>
+                    <label for="district_select">Sub-District <span class="label-translation">(Kecamatan)</span></label>
+                    <select id="district_select" name="district_select" required disabled></select>
+                    <input type="hidden" id="sub_district_text" name="sub_district_text" value="">
                 </div>
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="postal_code">Postal Code <span class="label-translation">(Kode Pos)</span></label>
                     <input type="text" id="postal_code" name="postal_code" value="<?php echo htmlspecialchars($address['postal_code'] ?? ''); ?>" required>
-                </div>
+                 </div>
                  <div class="form-group">
                     <label for="phone">Phone</label>
                     <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($address['phone'] ?? ''); ?>">
-                </div>
+                 </div>
                 
                 <button type="submit" name="save_address" class="btn btn-save">Save Address</button>
             </form>
@@ -279,4 +318,99 @@ $conn->close();
     </div>
 </div>
 
+<script>
+$(document).ready(function() {
+    // Hanya jalankan skrip ini jika kita berada di halaman 'addresses'
+    // dan elemen dropdown-nya ada
+    if ($('#province_select').length) { 
+    
+        // Simpan ID yang tersimpan dari PHP (Gunakan variabel $address dari kode Anda)
+        const savedProvinceId = <?php echo json_encode($address['province_id'] ?? null); ?>;
+        const savedCityId = <?php echo json_encode($address['city_id'] ?? null); ?>;
+        const savedDistrictId = <?php echo json_encode($address['district_id'] ?? null); ?>;
+
+        // --- 1. MEMUAT PROVINSI AWAL ---
+        $.getJSON('api/get_location.php?type=province', function(data) {
+            const province_select = $('#province_select');
+            province_select.append('<option value="">Pilih Provinsi</option>');
+            $.each(data, function(key, val) {
+                province_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
+            });
+            
+            // Jika ada data provinsi tersimpan, pilih provinsi itu
+            if (savedProvinceId) {
+                province_select.val(savedProvinceId);
+                // Trigger 'change' untuk memuat kota secara otomatis
+                province_select.trigger('change'); 
+            }
+        });
+
+        // --- 2. MEMUAT KOTA (SAAT PROVINSI BERUBAH) ---
+        $('#province_select').change(function() {
+            const province_id = $(this).val();
+            const province_name = $(this).find('option:selected').data('name');
+            $('#province_text').val(province_name); // Simpan nama ke hidden input
+            
+            $('#city_select').prop('disabled', true).html('<option value="">Loading...</option>');
+            $('#district_select').prop('disabled', true).html('<option value="">Pilih Kecamatan</option>');
+            
+            // Hapus sisa ID tersimpan agar tidak salah pilih
+            let currentSavedCityId = (province_id == savedProvinceId) ? savedCityId : null;
+            
+            if (province_id) {
+                $.getJSON('api/get_location.php?type=city&id=' + province_id, function(data) {
+                    const city_select = $('#city_select');
+                    city_select.html('<option value="">Pilih Kota/Kabupaten</option>');
+                    $.each(data, function(key, val) {
+                        city_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
+                    });
+                    
+                    // Jika ada data kota tersimpan, pilih kota itu
+                    if (currentSavedCityId) {
+                        city_select.val(currentSavedCityId);
+                        // Trigger 'change' untuk memuat kecamatan
+                        city_select.trigger('change');
+                    }
+                    city_select.prop('disabled', false);
+                });
+            }
+        });
+
+        // --- 3. MEMUAT KECAMATAN (SAAT KOTA BERUBAH) ---
+        $('#city_select').change(function() {
+            const city_id = $(this).val();
+            const city_name = $(this).find('option:selected').data('name');
+            $('#city_text').val(city_name); // Simpan nama ke hidden input
+            
+            $('#district_select').prop('disabled', true).html('<option value="">Loading...</option>');
+            
+            let currentSavedDistrictId = (city_id == savedCityId) ? savedDistrictId : null;
+
+            if (city_id) {
+                $.getJSON('api/get_location.php?type=district&id=' + city_id, function(data) {
+                    const district_select = $('#district_select');
+                    district_select.html('<option value="">Pilih Kecamatan</option>');
+                    $.each(data, function(key, val) {
+                        district_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
+                    });
+                    
+                    // Jika ada data kecamatan tersimpan, pilih kecamatan itu
+                    if (currentSavedDistrictId) {
+                        district_select.val(currentSavedDistrictId);
+                        // Trigger 'change' untuk menyimpan nama
+                        district_select.trigger('change');
+                    }
+                    district_select.prop('disabled', false);
+                });
+            }
+        });
+        
+        // --- 4. SIMPAN NAMA KECAMATAN ---
+        $('#district_select').change(function() {
+            const district_name = $(this).find('option:selected').data('name');
+            $('#sub_district_text').val(district_name); // Simpan nama ke hidden input
+        });
+    }
+});
+</script>
 <?php include 'includes/footer.php'; ?>

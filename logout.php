@@ -3,7 +3,7 @@
 session_start();
 
 // Simpan pesan notifikasi di session SEBELUM session dihancurkan
-$_SESSION['flash_message'] = "Anda telah berhasil logout.";
+$_SESSION['flash_message'] = "See you next time! You've been logged out.";
 
 // 1. Hapus semua variabel sesi yang terkait dengan login
 unset($_SESSION['user_id']);
