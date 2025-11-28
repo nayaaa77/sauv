@@ -3,8 +3,5 @@ composer.phar
 vendor/
 .idea
 .DS_STORE
-
-# file: .gitignore
-
 /vendor
 .env

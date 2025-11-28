@@ -11,10 +11,36 @@ require_once 'functions.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sauvatte</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="assets/css/style.css"> 
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+    
+    <script src="assets/js/provinces.js"></script> 
+    
+    <style>
+        /* Menyesuaikan Select2 agar pas dengan tinggi form Anda */
+        .select2-container--default .select2-selection--single {
+            height: 40px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px;
+            padding-left: 12px;
+            color: #333;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px;
+        }
+        .select2-container {
+            width: 100% !important; 
+        }
+    </style>
+    </head>
 <body>
     <header class="site-header">
         <div class="container">

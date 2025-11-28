@@ -240,17 +240,17 @@ $conn->close();
                 
                 <div class="form-group">
                     <label for="province_select">State / Province <span class="label-translation">(Provinsi)</span></label>
-                    <select id="province_select" name="province_select" required></select>
+                    <select id="province_select" name="province_select" class="select2-dynamic" required></select>
                     <input type="hidden" id="province_text" name="province_text" value="">
                 </div>
                 <div class="form-group">
                     <label for="city_select">City / Town <span class="label-translation">(Kota/Kabupaten)</span></label>
-                    <select id="city_select" name="city_select" required disabled></select>
+                    <select id="city_select" name="city_select" class="select2-dynamic" required disabled></select>
                     <input type="hidden" id="city_text" name="city_text" value="">
                 </div>
                 <div class="form-group">
                     <label for="district_select">Sub-District <span class="label-translation">(Kecamatan)</span></label>
-                    <select id="district_select" name="district_select" required disabled></select>
+                    <select id="district_select" name="district_select" class="select2-dynamic" required disabled></select>
                     <input type="hidden" id="sub_district_text" name="sub_district_text" value="">
                 </div>
                 <div class="form-group">
@@ -321,86 +321,110 @@ $conn->close();
 <script>
 $(document).ready(function() {
     // Hanya jalankan skrip ini jika kita berada di halaman 'addresses'
-    // dan elemen dropdown-nya ada
     if ($('#province_select').length) { 
     
-        // Simpan ID yang tersimpan dari PHP (Gunakan variabel $address dari kode Anda)
+        // Inisialisasi Select2
+        $('#province_select, #city_select, #district_select').select2({
+            width: '100%'
+        });
+
+        // Simpan ID yang tersimpan dari PHP
         const savedProvinceId = <?php echo json_encode($address['province_id'] ?? null); ?>;
         const savedCityId = <?php echo json_encode($address['city_id'] ?? null); ?>;
         const savedDistrictId = <?php echo json_encode($address['district_id'] ?? null); ?>;
 
-        // --- 1. MEMUAT PROVINSI AWAL ---
-        $.getJSON('api/get_location.php?type=province', function(data) {
+        // --- 1. MEMUAT PROVINSI DARI LOKAL (TIDAK PAKAI API) ---
+        function loadLocalProvinces() {
             const province_select = $('#province_select');
             province_select.append('<option value="">Pilih Provinsi</option>');
-            $.each(data, function(key, val) {
-                province_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
-            });
+            
+            // Cek jika variabel localProvinces ada (dari file provinces.js)
+            if (typeof localProvinces !== 'undefined' && Array.isArray(localProvinces)) {
+                $.each(localProvinces, function(key, val) {
+                    // Kita gunakan struktur JSON yang sudah kita simpan: val.id dan val.name
+                    province_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
+                });
+            } else {
+                province_select.append('<option value="">Error: Gagal memuat data provinsi.</option>');
+            }
             
             // Jika ada data provinsi tersimpan, pilih provinsi itu
             if (savedProvinceId) {
                 province_select.val(savedProvinceId);
-                // Trigger 'change' untuk memuat kota secara otomatis
-                province_select.trigger('change'); 
+                province_select.trigger('change'); // Memicu 'change' untuk Select2
             }
-        });
+        }
+        // Langsung panggil fungsi muat provinsi
+        loadLocalProvinces();
+        // --- END PERUBAHAN ---
 
-        // --- 2. MEMUAT KOTA (SAAT PROVINSI BERUBAH) ---
+        // --- 2. MEMUAT KOTA (SAAT PROVINSI BERUBAH) - TETAP PAKAI API ---
         $('#province_select').change(function() {
             const province_id = $(this).val();
             const province_name = $(this).find('option:selected').data('name');
-            $('#province_text').val(province_name); // Simpan nama ke hidden input
+            $('#province_text').val(province_name || ''); 
             
-            $('#city_select').prop('disabled', true).html('<option value="">Loading...</option>');
-            $('#district_select').prop('disabled', true).html('<option value="">Pilih Kecamatan</option>');
-            
-            // Hapus sisa ID tersimpan agar tidak salah pilih
-            let currentSavedCityId = (province_id == savedProvinceId) ? savedCityId : null;
+            $('#city_select').prop('disabled', true).html('<option value="">Loading...</option>').trigger('change');
+            $('#district_select').prop('disabled', true).html('<option value="">Pilih Kecamatan</option>').trigger('change');
             
             if (province_id) {
+                // Ini TETAP memanggil API, tapi hanya saat user memilih provinsi
                 $.getJSON('api/get_location.php?type=city&id=' + province_id, function(data) {
                     const city_select = $('#city_select');
                     city_select.html('<option value="">Pilih Kota/Kabupaten</option>');
-                    $.each(data, function(key, val) {
-                        city_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
-                    });
-                    
-                    // Jika ada data kota tersimpan, pilih kota itu
-                    if (currentSavedCityId) {
-                        city_select.val(currentSavedCityId);
-                        // Trigger 'change' untuk memuat kecamatan
-                        city_select.trigger('change');
+                    if (data && Array.isArray(data)) {
+                        $.each(data, function(key, val) {
+                            let valId = val.id || val.city_id;
+                            let valName = val.name || val.city_name;
+                            
+                            if(valId && valName) {
+                                city_select.append('<option value="' + valId + '" data-name="' + valName + '">' + valName + '</option>');
+                            }
+                        });
                     }
+                    
                     city_select.prop('disabled', false);
+                    
+                    if (savedCityId && province_id == savedProvinceId) { 
+                        city_select.val(savedCityId);
+                    }
+                    
+                    city_select.trigger('change'); // Beri tahu Select2 bahwa opsi telah berubah
                 });
             }
         });
 
-        // --- 3. MEMUAT KECAMATAN (SAAT KOTA BERUBAH) ---
+        // --- 3. MEMUAT KECAMATAN (SAAT KOTA BERUBAH) - TETAP PAKAI API ---
         $('#city_select').change(function() {
             const city_id = $(this).val();
             const city_name = $(this).find('option:selected').data('name');
-            $('#city_text').val(city_name); // Simpan nama ke hidden input
+            $('#city_text').val(city_name || ''); 
             
-            $('#district_select').prop('disabled', true).html('<option value="">Loading...</option>');
-            
-            let currentSavedDistrictId = (city_id == savedCityId) ? savedDistrictId : null;
+            $('#district_select').prop('disabled', true).html('<option value="">Loading...</option>').trigger('change');
 
             if (city_id) {
+                // Ini TETAP memanggil API, tapi hanya saat user memilih kota
                 $.getJSON('api/get_location.php?type=district&id=' + city_id, function(data) {
                     const district_select = $('#district_select');
                     district_select.html('<option value="">Pilih Kecamatan</option>');
-                    $.each(data, function(key, val) {
-                        district_select.append('<option value="' + val.id + '" data-name="' + val.name + '">' + val.name + '</option>');
-                    });
-                    
-                    // Jika ada data kecamatan tersimpan, pilih kecamatan itu
-                    if (currentSavedDistrictId) {
-                        district_select.val(currentSavedDistrictId);
-                        // Trigger 'change' untuk menyimpan nama
-                        district_select.trigger('change');
+                     if (data && Array.isArray(data)) {
+                        $.each(data, function(key, val) {
+                            let valId = val.id || val.district_id || val.subdistrict_id;
+                            let valName = val.name || val.district_name || val.subdistrict_name;
+                            
+                            if(valId && valName) {
+                                district_select.append('<option value="' + valId + '" data-name="' + valName + '">' + valName + '</option>');
+                            }
+                        });
                     }
+                    
                     district_select.prop('disabled', false);
+
+                    if (savedDistrictId && city_id == savedCityId) { 
+                        district_select.val(savedDistrictId);
+                    }
+                    
+                    district_select.trigger('change'); // Beri tahu Select2 bahwa opsi telah berubah
                 });
             }
         });
@@ -408,7 +432,7 @@ $(document).ready(function() {
         // --- 4. SIMPAN NAMA KECAMATAN ---
         $('#district_select').change(function() {
             const district_name = $(this).find('option:selected').data('name');
-            $('#sub_district_text').val(district_name); // Simpan nama ke hidden input
+            $('#sub_district_text').val(district_name || ''); // Simpan nama ke hidden input
         });
     }
 });

@@ -40,13 +40,22 @@ if (isset($_POST['add_to_cart'])) {
         if ($product = $result->fetch_assoc()) {
             if (isset($_SESSION['cart'][$product_id])) {
                 $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+                
+                // === TAMBAHAN LOGIKA BERAT ===
+                $_SESSION['cart'][$product_id]['weight'] = 200; 
+                // === END TAMBAHAN ===
+
             } else {
                 $_SESSION['cart'][$product_id] = [
                     'name'     => $product['name'],
                     'price'    => $product['price'],
                     'quantity' => $quantity,
                     'image'    => $product['image_url'],
-                    'stock'    => $product['stock']
+                    'stock'    => $product['stock'],
+                    
+                    // === TAMBAHAN LOGIKA BERAT ===
+                    'weight'   => 200 
+                    // === END TAMBAHAN ===
                 ];
             }
         }
@@ -81,8 +90,6 @@ if (isset($_POST['remove_item'])) {
 }
 ?>
 <?php include 'includes/header.php'; ?>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <div class="container">
     <h1>Your Cart</h1>
