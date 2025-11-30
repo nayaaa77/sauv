@@ -13,16 +13,15 @@ require_once 'functions.php';
     <title>Sauvatte</title>
     
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
-    <link rel="stylesheet" href="assets/css/style.css"> 
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
+    <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="assets/js/provinces.js"></script> 
     
     <style>
-        /* Menyesuaikan Select2 agar pas dengan tinggi form Anda */
+        /* Menyesuaikan Select2 agar pas dengan tinggi form */
         .select2-container--default .select2-selection--single {
             height: 40px; 
             border: 1px solid #ddd;
@@ -40,7 +39,7 @@ require_once 'functions.php';
             width: 100% !important; 
         }
     </style>
-    </head>
+</head>
 <body>
     <header class="site-header">
         <div class="container">
@@ -48,24 +47,27 @@ require_once 'functions.php';
                 <div class="nav-brand">
                     <a href="index.php">SAUVATTE</a>
                 </div>
-                <ul class="nav-menu">
+
+                <button class="mobile-menu-toggle" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="shop.php">Shop</a></li>
                     <li><a href="blog.php">Blog</a></li>
                     <li><a href="our_story.php">Our Story</a></li>
-                    <span class="magic-line"></span>  
                 </ul>
+
                 <div class="nav-icons">
                     <span class="divider">|</span>
                     
                     <a href="cart.php" aria-label="Shopping Cart" class="cart-icon-wrapper">
                         <i class="fas fa-shopping-cart"></i>
                         <?php
-                        // Hitung jumlah item unik di keranjang
                         $cart_count = 0;
                         if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
                             $cart_count = count($_SESSION['cart']);
                         }
-                        // Tampilkan badge hanya jika ada item di keranjang
                         if ($cart_count > 0):
                         ?>
                             <span class="cart-badge"><?php echo $cart_count; ?></span>

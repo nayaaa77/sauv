@@ -1,28 +1,61 @@
 <?php
-/* --- KODE BARU --- */
-// 1. Mulai Session dan Alihkan jika sudah login
-// ==========================================================
-// Selalu mulai session di awal file
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+// 1. Mulai session & koneksi DB paling pertama
+session_start(); 
+include 'includes/db_conn.php';
+
+// Cek apakah user sudah login
+function check_login_status() {
+    return isset($_SESSION['user_id']);
 }
 
-// Jika pengguna sudah login, langsung alihkan ke halaman akun mereka
-if (isset($_SESSION['user_id'])) {
-    header('Location: my_account.php');
+// Jika sudah login, lempar langsung
+if (check_login_status()) {
+    header('Location: index.php');
     exit();
 }
-// ==========================================================
-/* --- AKHIR KODE BARU --- */
 
-require_once 'includes/db_conn.php';
-require_once 'includes/functions.php';
-// require_once 'includes/mailer_config.php'; // Konfigurasi email tidak lagi diperlukan untuk registrasi
+$error_msg = '';
+$success_msg = '';
 
-$errors = [];
-$notification = ''; // Variabel untuk pesan notifikasi
+// --- PROSES LOGIN (Ditaruh di atas sebelum Header HTML) ---
+if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-// --- PROSES REGISTRASI (TELAH DIMODIFIKASI) ---
+    $stmt = $conn->prepare("SELECT id, password, full_name, role FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            // Set Session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['full_name'];
+            $_SESSION['user_role'] = $user['role'];
+            
+            // --- BAGIAN INI YANG DIPERBAIKI ---
+            // Default ke index.php sesuai permintaanmu
+            $redirect_url = 'index.php'; 
+            
+            // Kalau ada keranjang, prioritaskan ke checkout
+            if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                $redirect_url = 'checkout.php';
+            }
+            
+            header("Location: $redirect_url");
+            exit();
+        } else {
+            $error_msg = "Password salah.";
+        }
+    } else {
+        $error_msg = "Email tidak ditemukan.";
+    }
+    $stmt->close();
+}
+
+// --- PROSES REGISTER (Ditaruh di atas juga) ---
 if (isset($_POST['register'])) {
     $full_name = $_POST['full_name'];
     $email = $_POST['email'];
@@ -30,157 +63,134 @@ if (isset($_POST['register'])) {
     $confirm_password = $_POST['confirm_password'];
 
     if ($password !== $confirm_password) {
-        $errors[] = "Password dan konfirmasi password tidak cocok.";
-    }
-    
-    $stmt_check = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt_check->bind_param("s", $email);
-    $stmt_check->execute();
-    $stmt_check->store_result();
-    if ($stmt_check->num_rows > 0) {
-        $errors[] = "Email sudah terdaftar.";
-    }
-    $stmt_check->close();
-
-    if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $is_verified = 1; // Langsung set status terverifikasi
-
-        // Query INSERT diubah, tidak lagi menyimpan token verifikasi
-        $stmt = $conn->prepare("INSERT INTO users (full_name, email, password, is_verified) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sssi", $full_name, $email, $hashed_password, $is_verified);
-        
-        if ($stmt->execute()) {
-            // Pengiriman email dinonaktifkan
-            // Alihkan ke halaman login dengan pesan sukses
-            $_SESSION['message'] = "Registrasi berhasil! Anda sekarang bisa login.";
-            header('Location: login_register.php');
-            exit();
-        } else {
-            $errors[] = "Registrasi gagal, silakan coba lagi.";
-        }
-        $stmt->close();
-    }
-}
-
-// --- PROSES LOGIN (TIDAK ADA PERUBAHAN) ---
-if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        // Karena pendaftaran baru langsung verified, pengecekan ini akan lolos
-        if ($user['is_verified'] == 0) {
-            $errors[] = "Akun Anda belum diverifikasi. Silakan cek email Anda.";
-        } elseif (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['full_name'];
-            $_SESSION['user_role'] = $user['role'];
-            
-            if (isset($_SESSION['redirect_to'])) {
-                $redirect_url = $_SESSION['redirect_to'];
-                unset($_SESSION['redirect_to']);
-                header("Location: " . $redirect_url);
-            } else {
-                header('Location: index.php');
-            }
-            exit();
-        } else {
-            $errors[] = "Email atau password salah.";
-        }
+        $error_msg = "Password konfirmasi tidak cocok.";
     } else {
-        $errors[] = "Akun belum terdaftar. Silakan registrasi terlebih dahulu.";
+        $stmt_check = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt_check->bind_param("s", $email);
+        $stmt_check->execute();
+        $result_check = $stmt_check->get_result();
+
+        if ($result_check->num_rows > 0) {
+            $error_msg = "Email sudah terdaftar.";
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $stmt = $conn->prepare("INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $full_name, $email, $hashed_password);
+
+            if ($stmt->execute()) {
+                $success_msg = "Registrasi berhasil! Silakan login.";
+            } else {
+                $error_msg = "Gagal mendaftar. Coba lagi.";
+            }
+            $stmt->close();
+        }
+        $stmt_check->close();
     }
 }
+
+// --- BARU LOAD TAMPILAN (HEADER) SETELAH LOGIC SELESAI ---
+// Catatan: Pastikan di dalam includes/header.php TIDAK ADA session_start() lagi
+// Atau gunakan @session_start() di sana untuk mencegah error double session.
+include 'includes/header.php'; 
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - Sauvatte</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap');
-        body { font-family: 'Jost', sans-serif; background-color: #fff; color: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .account-container { max-width: 400px; width: 100%; text-align: center; padding: 20px; }
-        h1 { font-size: 24px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
-        .logo-container { margin-bottom: 30px; }
-        .logo-container img { max-width: 220px; height: auto; }
-        .notification { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; text-align: center; font-weight: 500; }
-        .notification.success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
-        .error-messages { color: red; background-color: #ffebee; border: 1px solid red; padding: 10px; margin-bottom: 20px; font-size: 14px; text-align: left; }
-        .login-alert { padding: 15px; margin-bottom: 20px; border: 1px solid #faebcc; border-radius: 4px; color: #8a6d3b; background-color: #fcf8e3; text-align: center; font-weight: 500;}
-        .form-toggle { display: flex; border: 1px solid #e5e5e5; margin-bottom: 30px; }
-        .toggle-btn { flex: 1; padding: 12px 10px; background-color: #f7f7f7; border: none; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s ease; }
-        .toggle-btn.active { background-color: #fff; border: 1px solid #111; margin: -1px; }
-        .form-content { text-align: left; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; margin-bottom: 8px; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #e5e5e5; box-sizing: border-box; font-size: 14px; }
-        .btn-primary { width: 100%; padding: 14px; background-color: #111; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-size: 13px; letter-spacing: 0.1em; margin-top: 10px; }
-        .form-footer { margin-top: 15px; font-size: 13px; }
-        .form-footer a { color: #111; text-decoration: none; }
-        #register-form { display: none; }
-    </style>
-</head>
-<body>
 
-    <div class="account-container">
-        <?php
-            // Menampilkan notifikasi dari session (untuk pesan sukses registrasi atau pesan lainnya)
-            if (isset($_SESSION['message']) && !empty($_SESSION['message'])) {
-                // Menentukan style notifikasi berdasarkan isi pesan
-                if (strpos(strtolower($_SESSION['message']), 'berhasil') !== false || strpos(strtolower($_SESSION['message']), 'successful') !== false) {
-                    echo '<div class="notification success">' . htmlspecialchars($_SESSION['message']) . '</div>';
-                } else {
-                    echo '<div class="login-alert">' . htmlspecialchars($_SESSION['message']) . '</div>';
-                }
-                unset($_SESSION['message']); // Hapus pesan setelah ditampilkan
-            }
-        ?>
-
-        <h1>My account</h1>
-        <div class="logo-container">
-            <img src="assets/img/logo.png" alt="Sauvatte Logo">
+<div class="container auth-page-container">
+    <div class="auth-card">
+        <div class="auth-tabs">
+            <button class="toggle-btn active" data-target="login-form">Sign In</button>
+            <button class="toggle-btn" data-target="register-form">Register</button>
         </div>
 
-        <?php if (!empty($errors)): ?>
-            <div class="error-messages">
-                <?php foreach ($errors as $error): ?>
-                    <p style="margin: 0;"><?php echo $error; ?></p>
-                <?php endforeach; ?>
-            </div>
+        <?php if ($error_msg): ?>
+            <div class="notification error"><?php echo $error_msg; ?></div>
+        <?php endif; ?>
+        <?php if ($success_msg): ?>
+            <div class="notification success"><?php echo $success_msg; ?></div>
         <?php endif; ?>
 
-        <div class="form-toggle">
-            <button class="toggle-btn active" data-form="login">Sign in</button>
-            <button class="toggle-btn" data-form="register">Register</button>
+        <div id="login-form" class="auth-form active">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to continue</p>
+            </div>
+            <form action="" method="POST">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" placeholder="example@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="******" required>
+                    </div>
+                </div>
+                 <div class="form-actions">
+                    <a href="forgot_password.php" class="forgot-link">Forget Password?</a>
+                </div>
+                <button type="submit" name="login" class="btn btn-auth">Sign In</button>
+            </form>
         </div>
 
-        <div class="form-content">
-            <form id="login-form" action="login_register.php" method="POST">
-                <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
-                <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
-                <button type="submit" name="login" class="btn-primary">Sign In</button>
-               <div class="form-footer">
-               <a href="forgot_password.php">Have you forgotten your password?</a>
-               </div>
-            </form>
-            <form id="register-form" action="login_register.php" method="POST">
-                <div class="form-group"><label>Full Name</label><input type="text" name="full_name" required></div>
-                <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
-                <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
-                <div class="form-group"><label>Confirm Password</label><input type="password" name="confirm_password" required></div>
-                <button type="submit" name="register" class="btn-primary">Register</button>
+        <div id="register-form" class="auth-form">
+             <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Elevate your shopping experience</p>
+            </div>
+            <form action="" method="POST">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="full_name" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" placeholder="example@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Create your password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="confirm_password" placeholder="Re-enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" name="register" class="btn btn-auth">REGISTER</button>
             </form>
         </div>
     </div>
-    <script src="assets/js/main.js"></script>
-</body>
-</html>
+</div>
+
+<script>
+// Script JS kamu tetap sama
+document.addEventListener('DOMContentLoaded', function() {
+    const btns = document.querySelectorAll('.toggle-btn');
+    const forms = document.querySelectorAll('.auth-form');
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.target).classList.add('active');
+        });
+    });
+});
+</script>
+
+<?php include 'includes/footer.php'; ?>

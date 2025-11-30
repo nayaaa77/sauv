@@ -238,23 +238,41 @@ unset($_SESSION['error_message']);
                     <h3>Shipping Address</h3>
 
                     <?php if ($saved_address): ?>
-                    <div class="address-selection">
+                        <div class="address-selection">
                         <div class="address-box saved-address-box">
                             <input type="radio" id="address_saved" name="address_choice" value="saved" checked>
-                            <label for="address_saved">
-                                <strong>Use Saved Address</strong>
-                                <p>
-                                    <?php echo htmlspecialchars($saved_address['first_name'] . ' ' . $saved_address['last_name']); ?><br>
-                                    <?php echo htmlspecialchars($saved_address['address_line1']); ?><br>
-                                    <?php echo htmlspecialchars($saved_address['sub_district'] . ', ' . $saved_address['city'] . ', ' . $saved_address['province'] . ' ' . $saved_address['postal_code']); ?>
-                                </p>
+                            <label for="address_saved" class="address-card">
+                                <div class="addr-icon">
+                                    <i class="fas fa-home"></i> </div>
+                                <div class="addr-content">
+                                    <strong>Gunakan Alamat Tersimpan</strong>
+                                    <p class="addr-preview">
+                                        <?php echo htmlspecialchars($saved_address['first_name'] . ' ' . $saved_address['last_name']); ?><br>
+                                        <?php echo htmlspecialchars($saved_address['address_line1']); ?><br>
+                                        <small><?php echo htmlspecialchars($saved_address['sub_district'] . ', ' . $saved_address['city'] . ', ' . $saved_address['province']); ?></small>
+                                    </p>
+                                </div>
+                                <div class="addr-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
                             </label>
                             
                             <input type="hidden" id="saved_district_id" value="<?php echo htmlspecialchars($saved_address['district_id'] ?? 0); ?>">
                         </div>
+
                         <div class="address-box new-address-toggle">
                             <input type="radio" id="address_new" name="address_choice" value="new">
-                            <label for="address_new"><strong>Use a Different Address</strong></label>
+                            <label for="address_new" class="address-card">
+                                <div class="addr-icon new">
+                                    <i class="fas fa-map-marker-alt"></i> </div>
+                                <div class="addr-content">
+                                    <strong>Gunakan Alamat Lain / Baru</strong>
+                                    <p class="addr-desc">Kirim ke alamat yang berbeda dari yang tersimpan.</p>
+                                </div>
+                                <div class="addr-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </label>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -328,39 +346,45 @@ unset($_SESSION['error_message']);
 
                 <div class="order-summary">
                     <h3>Order Summary</h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Product</th>
-                                <th style="text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($cart_items_for_display as $item): ?>
-                            <tr>
-                                <td style="padding: 8px;"><?php echo htmlspecialchars($item['name']); ?> (x<?php echo $item['quantity']; ?>)</td>
-                                <td style="text-align: right; padding: 8px;">Rp <?php echo number_format($item['price'] * $item['quantity'], 0, ',', '.'); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <tr>
-                                <th style="text-align: left; padding: 8px; border-top: 1px solid #ddd;">Subtotal </th>
-                                <th style="text-align: right; padding: 8px; border-top: 1px solid #ddd;">Rp <?php echo number_format($total_for_display, 0, ',', '.'); ?></th>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left; padding: 8px; border-top: 1px solid #eee;">Shipping:</th>
-                                <th style="text-align: right; padding: 8px; border-top: 1px solid #eee;">Rp <span id="shipping_cost_display">0</span></th>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th style="text-align: left; padding: 8px; border-top: 2px solid #333; font-size: 1.2em;">ORDER TOTAL</th>
-                                <th style="text-align: right; padding: 8px; border-top: 2px solid #333; font-size: 1.2em;">Rp <span id="grand_total_display"><?php echo number_format($total_for_display, 0, ',', '.'); ?></span></th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    
+                    <div class="checkout-items-list">
+                        <?php foreach ($cart_items_for_display as $item): ?>
+                        <div class="checkout-item">
+                            <div class="checkout-img">
+                                <?php 
+                                    // Cek nama key untuk gambar di session cart Anda
+                                    $img_src = $item['image'] ?? $item['main_image'] ?? 'placeholder.png'; 
+                                ?>
+                                <img src="assets/img/<?php echo htmlspecialchars($img_src); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                                <span class="qty-badge"><?php echo $item['quantity']; ?></span>
+                            </div>
+                            
+                            <div class="checkout-details">
+                                <div class="prod-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                                <div class="prod-price">Rp <?php echo number_format($item['price'] * $item['quantity'], 0, ',', '.'); ?></div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="checkout-totals">
+                        <div class="total-row">
+                            <span>Subtotal</span>
+                            <span>Rp <?php echo number_format($total_for_display, 0, ',', '.'); ?></span>
+                        </div>
+                        <div class="total-row">
+                            <span>Shipping</span>
+                            <span>Rp <span id="shipping_cost_display">0</span></span>
+                        </div>
+                        <div class="total-row final">
+                            <span>Total</span>
+                            <span class="gold-text">Rp <span id="grand_total_display"><?php echo number_format($total_for_display, 0, ',', '.'); ?></span></span>
+                        </div>
+                    </div>
                     
                     <button type="submit" name="place_order" id="place_order_button" class="btn" style="width: 100%; margin-top: 20px;" disabled>Place Order</button>
                 </div>
+            
             </div>
         </form>
     <?php endif; ?>
@@ -597,10 +621,10 @@ if ($is_midtrans_processing):
                         window.location.href = 'order_detail.php?id=<?php echo $final_order_id; ?>';
                     },
                     onError: function(result){
-                        alert("Pembayaran Gagal. Silakan coba lagi.");
+                        alert("Payment unsuccessful. Please try again.");
                     },
                     onClose: function(){
-                        alert('Anda menutup jendela pembayaran sebelum menyelesaikan transaksi.');
+                        alert('You closed the payment window before completing the transaction.');
                     }
                 });
             };

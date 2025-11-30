@@ -1,27 +1,40 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // ===== Kode untuk toggle Login/Register =====
-    const toggleButtons = document.querySelectorAll('.toggle-btn');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
+    
+    // ==========================================================
+    // 1. LOGIC TAB LOGIN & REGISTER (PERBAIKAN UTAMA)
+    // ==========================================================
+    // Logika ini cocok dengan HTML "Sliding Tab" yang baru
+    const authBtns = document.querySelectorAll('.toggle-btn');
+    const authForms = document.querySelectorAll('.auth-form');
 
-    if (toggleButtons.length > 0 && loginForm && registerForm) {
-        toggleButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                toggleButtons.forEach(btn => btn.classList.remove('active'));
+    if (authBtns.length > 0) {
+        authBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Mencegah refresh jika tombol ada di dalam form (opsional)
+                e.preventDefault(); 
+
+                // 1. Hapus class 'active' dari semua tombol & form
+                authBtns.forEach(b => b.classList.remove('active'));
+                authForms.forEach(f => f.classList.remove('active'));
+
+                // 2. Tambah class 'active' ke tombol yang sedang diklik
                 this.classList.add('active');
 
-                if (this.dataset.form === 'login') {
-                    loginForm.style.display = 'block';
-                    registerForm.style.display = 'none';
-                } else {
-                    loginForm.style.display = 'none';
-                    registerForm.style.display = 'block';
+                // 3. Ambil target ID dari atribut data-target="..." 
+                const targetId = this.getAttribute('data-target');
+                const targetForm = document.getElementById(targetId);
+
+                // 4. Munculkan form yang sesuai
+                if (targetForm) {
+                    targetForm.classList.add('active');
                 }
             });
         });
     }
 
-    // ===== Kode untuk Tab Detail Produk =====
+    // ==========================================================
+    // 2. LOGIC TAB DETAIL PRODUK
+    // ==========================================================
     const tabLinks = document.querySelectorAll('.product-tabs .tab-link');
     const tabPanes = document.querySelectorAll('.product-tabs .tab-pane');
 
@@ -57,7 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Kode untuk Galeri Gambar Produk =====
+    // ==========================================================
+    // 3. LOGIC GALERI GAMBAR PRODUK
+    // ==========================================================
     const thumbnails = document.querySelectorAll('.thumbnail-item');
     const mainImage = document.getElementById('main-image');
 
@@ -75,7 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Kode untuk Tombol Kuantitas Produk =====
+    // ==========================================================
+    // 4. LOGIC TOMBOL KUANTITAS (DETAIL PRODUK)
+    // ==========================================================
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
     const quantityInput = document.getElementById('quantity');
@@ -115,9 +132,11 @@ document.addEventListener('DOMContentLoaded', function() {
         updateButtonStates();
     }
 
-    // ===== Kode untuk menandai menu navbar yang aktif =====
+    // ==========================================================
+    // 5. LOGIC ACTIVE MENU NAVBAR
+    // ==========================================================
     const navLinks = document.querySelectorAll('.nav-menu a');
-    const currentPage = window.location.pathname.split("/").pop(); // Mengambil nama file dari URL
+    const currentPage = window.location.pathname.split("/").pop(); 
 
     navLinks.forEach(link => {
         const linkPage = link.getAttribute('href');
@@ -126,7 +145,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ===== Kode untuk Tombol Kuantitas di Halaman Keranjang =====
+    // ==========================================================
+    // 6. LOGIC KUANTITAS DI KERANJANG (CART)
+    // ==========================================================
     const cartItemsList = document.querySelector('.cart-items-list');
 
     if (cartItemsList) {
@@ -152,7 +173,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== Kode untuk toggle form alamat di halaman Checkout =====
+    // ==========================================================
+    // 7. LOGIC FORM ALAMAT BARU (CHECKOUT)
+    // ==========================================================
     const addressChoiceRadios = document.querySelectorAll('input[name="address_choice"]');
     const newAddressForm = document.getElementById('new-address-form');
     const newAddressInputs = newAddressForm ? newAddressForm.querySelectorAll('input') : [];
@@ -171,7 +194,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ===== KODE UNTUK ANIMASI IKON KERANJANG (DENGAN PERBAIKAN) =====
+    // ==========================================================
+    // 8. ANIMASI IKON KERANJANG SAAT ADD TO CART
+    // ==========================================================
     const addToCartForm = document.querySelector('form[action="cart.php"]');
     const cartIcon = document.querySelector('.cart-icon-wrapper');
 
@@ -192,18 +217,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, { once: true });
 
                 setTimeout(() => {
-                    // === BAGIAN PENTING YANG DIPERBAIKI ===
-                    // Buat input tersembunyi untuk memberi tahu server bahwa ini adalah aksi 'add_to_cart'
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'add_to_cart';
-                    hiddenInput.value = '1'; // Nilainya bisa apa saja, yang penting 'name' nya ada
+                    hiddenInput.value = '1';
                     addToCartForm.appendChild(hiddenInput);
-                    // =====================================
 
                     addToCartForm.submit();
                 }, 400);
             });
         }
+    }
+
+    // ==========================================================
+    // 9. MOBILE MENU (HAMBURGER) LOGIC [OPTIONAL]
+    // ==========================================================
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu'); 
+
+    if (mobileMenuToggle && navMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (icon) {
+                if (icon.classList.contains('fa-bars')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
     }
 });
