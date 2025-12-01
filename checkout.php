@@ -23,12 +23,6 @@ if (!$is_midtrans_processing && empty($_SESSION['cart'])) {
     exit();
 }
 
-if (!$is_midtrans_processing && empty($_SESSION['cart'])) {
-    header('Location: index.php'); 
-    exit();
-}
-// ===============================================
-
 $user_id = $_SESSION['user_id'];
 $shipping_address_str = '';
 
@@ -50,7 +44,7 @@ if (isset($_POST['place_order'])) {
     
     // VALIDASI ONGKIR
     if (!is_numeric($shipping_cost) || $shipping_cost <= 0 || !isset($destination_district_id) || $destination_district_id == 0) {
-        $_SESSION['error_message'] = "Pilih alamat lengkap dan layanan pengiriman.";
+        $_SESSION['error_message'] = "Please select a complete address and shipping service.";
         header('Location: checkout.php');
         exit();
     }
@@ -81,14 +75,14 @@ if (isset($_POST['place_order'])) {
     }
 
     $shipping_address_str = 
-        "Layanan: " . $shipping_service . "\n" .
-        "Ongkir: Rp " . number_format($shipping_cost, 0, ',', '.') . "\n" .
-        "ID Kec. Tujuan: " . $destination_district_id . "\n" .
-        "Nama Penerima: " . $first_name . ' ' . $last_name . "\n" . 
-        "Alamat: " . $address1 . "\n" .
+        "Service: " . $shipping_service . "\n" .
+        "Shipping Cost: Rp " . number_format($shipping_cost, 0, ',', '.') . "\n" .
+        "District ID: " . $destination_district_id . "\n" .
+        "Receiver: " . $first_name . ' ' . $last_name . "\n" . 
+        "Address: " . $address1 . "\n" .
         $sub_district . ', ' . $city . "\n" . 
         $province . ' ' . $postal_code . "\n" . 
-        'Telp: ' . $phone;
+        'Phone: ' . $phone;
     
     // Hitung Subtotal Produk
     $subtotal_amount = 0;
@@ -145,7 +139,7 @@ if (isset($_POST['place_order'])) {
             'id' => 'SHIPPING_FEE',
             'price' => (int)$shipping_cost,
             'quantity' => 1,
-            'name' => "Biaya Kirim ({$shipping_service})"
+            'name' => "Shipping Fee ({$shipping_service})"
         ];
 
         $transaction_details = ['order_id' => $order_id . '-' . time(), 'gross_amount'  => (int)$total_amount];
@@ -182,20 +176,19 @@ if ($is_midtrans_processing) {
 $total_for_display = 0;
 $total_weight_for_display = 0; // 1. Berat dimulai dari 0
 $cart_items_for_display = $_SESSION['cart_temp'] ?? $_SESSION['cart'];
-foreach ($cart_items_for_display as $item) {
-    $total_for_display += $item['price'] * $item['quantity'];
-    
-    // === PERUBAHAN UTAMA DI SINI ===
-    // 2. Baris ini diaktifkan (un-comment)
-    //    Dia akan mengambil 'weight' (200) dari session dan mengalikannya dengan quantity
-    $total_weight_for_display += $item['weight'] * $item['quantity'];
+
+// [FIX ERROR]: Pengecekan agar tidak error jika cart kosong atau weight tidak ada
+if ($cart_items_for_display) {
+    foreach ($cart_items_for_display as $item) {
+        $total_for_display += $item['price'] * $item['quantity'];
+        
+        // [FIX ERROR KEY]: Gunakan default 200g jika key 'weight' tidak ada
+        $weight = isset($item['weight']) ? $item['weight'] : 200; 
+        $total_weight_for_display += $weight * $item['quantity'];
+    }
 }
-// 3. Baris ini DIHAPUS, agar berat minimal tetap dihitung (misal 200gr)
-// if ($total_weight_for_display == 0) $total_weight_for_display = 1000; 
 
 // 4. Tambahan: RajaOngkir punya berat minimum (biasanya 1000gr).
-//    Jika totalnya 200gr, kita tetap kirim 1000gr agar ongkirnya valid.
-//    Jika totalnya 4000gr, kita kirim 4000gr.
 if ($total_weight_for_display < 1000) {
     $total_weight_for_display = 1000;
 }
@@ -207,10 +200,11 @@ unset($_SESSION['error_message']);
 ?>
 
 <?php include 'includes/header.php'; ?>
+
 <div class="container">
-    <div class="page-header-custom" style="display: flex; align-items: center; gap: 15px; margin-top: 40px; margin-bottom: 20px;">
-        <a href="javascript:history.back()" class="btn-back" title="Kembali"><i class="fas fa-arrow-left"></i></a>
-        <h1 style="margin: 0;">Checkout</h1>
+    <div class="page-header-custom" style="display: flex; align-items: center; gap: 15px;">
+        <a href="javascript:history.back()" class="btn-back" title="Back"><i class="fas fa-arrow-left"></i></a>
+        <h1>Checkout</h1>
     </div>
     
     <?php if ($error_message): ?>
@@ -235,7 +229,7 @@ unset($_SESSION['error_message']);
             
             <div class="checkout-layout">
                 <div class="checkout-form">
-                    <h3>Shipping Address</h3>
+                    <h2>Shipping Address</h2>
 
                     <?php if ($saved_address): ?>
                         <div class="address-selection">
@@ -245,7 +239,7 @@ unset($_SESSION['error_message']);
                                 <div class="addr-icon">
                                     <i class="fas fa-home"></i> </div>
                                 <div class="addr-content">
-                                    <strong>Gunakan Alamat Tersimpan</strong>
+                                    <strong>Use Saved Address</strong>
                                     <p class="addr-preview">
                                         <?php echo htmlspecialchars($saved_address['first_name'] . ' ' . $saved_address['last_name']); ?><br>
                                         <?php echo htmlspecialchars($saved_address['address_line1']); ?><br>
@@ -266,8 +260,8 @@ unset($_SESSION['error_message']);
                                 <div class="addr-icon new">
                                     <i class="fas fa-map-marker-alt"></i> </div>
                                 <div class="addr-content">
-                                    <strong>Gunakan Alamat Lain / Baru</strong>
-                                    <p class="addr-desc">Kirim ke alamat yang berbeda dari yang tersimpan.</p>
+                                    <strong>Use New Address</strong>
+                                    <p class="addr-desc">Ship to a different address.</p>
                                 </div>
                                 <div class="addr-check">
                                     <i class="fas fa-check-circle"></i>
@@ -280,17 +274,17 @@ unset($_SESSION['error_message']);
                     <div id="new-address-form" class="new-address-form-container" <?php if ($saved_address) echo 'style="display: none;"'; ?>>
                         
                         <div class="form-group">
-                            <label for="province_select">Province <span class="label-translation">(Provinsi)</span></label>
+                            <label for="province_select">Province</label>
                             <select id="province_select" name="province_select" class="select2-dynamic" <?php if (!$saved_address) echo 'required'; ?>></select>
                             <input type="hidden" id="province_text" name="province_text" value="">
                         </div>
                         <div class="form-group">
-                            <label for="city_select">City / Town <span class="label-translation">(Kota/Kabupaten)</span></label>
+                            <label for="city_select">City / Town</label>
                             <select id="city_select" name="city_select" class="select2-dynamic" <?php if (!$saved_address) echo 'required'; ?> disabled></select>
                             <input type="hidden" id="city_text" name="city_text" value="">
                         </div>
                         <div class="form-group">
-                            <label for="district_select">Sub-District <span class="label-translation">(Kecamatan)</span></label>
+                            <label for="district_select">Sub-District</label>
                             <select id="district_select" name="district_select" class="select2-dynamic" <?php if (!$saved_address) echo 'required'; ?> disabled></select>
                             <input type="hidden" id="sub_district_text" name="sub_district_text" value="">
                         </div>
@@ -309,7 +303,7 @@ unset($_SESSION['error_message']);
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="postal_code">Postal Code <span class="label-translation">(Kode Pos)</span></label>
+                            <label for="postal_code">Postal Code</label>
                             <input type="text" id="postal_code" name="postal_code" <?php if (!$saved_address) echo 'required'; ?>>
                         </div>
                         <div class="form-group">
@@ -318,7 +312,7 @@ unset($_SESSION['error_message']);
                         </div>
                     </div>
                     
-                    <h3 style="margin-top: 30px;">Shipping Method</h3>
+                    <h2 style="margin-top: 30px;">Shipping Method</h2>
                     <div class="form-group">
                         <label for="courier_select">Select Courier:</label>
                         <select id="courier_select" name="courier_select" class="select2-dynamic" required>
@@ -345,14 +339,13 @@ unset($_SESSION['error_message']);
                 </div>
 
                 <div class="order-summary">
-                    <h3>Order Summary</h3>
+                    <h2>Order Summary</h2>
                     
                     <div class="checkout-items-list">
                         <?php foreach ($cart_items_for_display as $item): ?>
                         <div class="checkout-item">
                             <div class="checkout-img">
                                 <?php 
-                                    // Cek nama key untuk gambar di session cart Anda
                                     $img_src = $item['image'] ?? $item['main_image'] ?? 'placeholder.png'; 
                                 ?>
                                 <img src="assets/img/<?php echo htmlspecialchars($img_src); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
@@ -438,7 +431,7 @@ $(document).ready(function() {
     // --- 2. FUNGSI MEMUAT LOKASI (ALAMAT BARU) ---
     $.getJSON('api/get_location.php?type=province', function(data) {
         const province_select = $('#province_select');
-        province_select.append('<option value="">Pilih Provinsi</option>');
+        province_select.append('<option value="">Select Province</option>');
         if (data && Array.isArray(data)) {
             $.each(data, function(key, val) {
                 let valId = val.id || val.province_id;
@@ -457,13 +450,13 @@ $(document).ready(function() {
         $('#province_text').val(province_name || '');
         
         $('#city_select').prop('disabled', true).html('<option value="">Loading...</option>').trigger('change');
-        $('#district_select').prop('disabled', true).html('<option value="">Pilih Kecamatan</option>').trigger('change');
+        $('#district_select').prop('disabled', true).html('<option value="">Select District</option>').trigger('change');
         resetShipping();
         
         if (province_id) {
             $.getJSON('api/get_location.php?type=city&id=' + province_id, function(data) {
                 const city_select = $('#city_select');
-                city_select.html('<option value="">Pilih Kota/Kabupaten</option>');
+                city_select.html('<option value="">Select City / Town</option>');
                 if (data && Array.isArray(data)) {
                     $.each(data, function(key, val) {
                         let valId = val.id || val.city_id;
@@ -474,7 +467,6 @@ $(document).ready(function() {
                         }
                     });
                 }
-                // PERBAIKAN: Panggil .trigger('change') SETELAH populasi & enable
                 city_select.prop('disabled', false).trigger('change');
             });
         }
@@ -491,7 +483,7 @@ $(document).ready(function() {
         if (city_id) {
             $.getJSON('api/get_location.php?type=district&id=' + city_id, function(data) {
                 const district_select = $('#district_select');
-                district_select.html('<option value="">Pilih Kecamatan</option>');
+                district_select.html('<option value="">Select District</option>');
                 if (data && Array.isArray(data)) {
                     $.each(data, function(key, val) {
                         let valId = val.id || val.district_id || val.subdistrict_id;
@@ -502,7 +494,6 @@ $(document).ready(function() {
                         }
                     });
                 }
-                // PERBAIKAN: Panggil .trigger('change') SETELAH populasi & enable
                 district_select.prop('disabled', false).trigger('change');
             });
         }
@@ -516,21 +507,20 @@ $(document).ready(function() {
         if (address_choice === 'new') {
             destination_id = $('#district_select').val();
         } else {
-            destination_id = $('#saved_district_id').val(); // <-- BACA DARI ALAMAT TERSIMPAN
+            destination_id = $('#saved_district_id').val();
         }
         
-        // Simpan ID tujuan yang valid ke hidden input
         if (destination_id && destination_id > 0) {
             $('#hidden_destination_district_id').val(destination_id);
         } else {
-            $('#hidden_destination_district_id').val(''); // Kosongkan jika tidak valid
+            $('#hidden_destination_district_id').val('');
         }
 
         const weight = $('#total_weight').val();
         const courier = $('#courier_select').val();
         
         if (destination_id && destination_id > 0 && weight > 0 && courier) {
-            $('#cost_options').html('<p>Mencari biaya...</p>');
+            $('#cost_options').html('<p>Calculating shipping cost...</p>');
             
             $.post('api/calculate_cost.php', {
                 destination_id: destination_id,
@@ -539,7 +529,7 @@ $(document).ready(function() {
             }, function(response) {
                 let output = '';
                 if (response.meta && response.meta.code == 200 && response.data.length > 0) {
-                    output += '<h4>Pilih Layanan:</h4>';
+                    output += '<h4>Select Service:</h4>';
                     $.each(response.data, function(index, service) {
                         const cost = service.cost;
                         const etd = service.etd;
@@ -548,11 +538,11 @@ $(document).ready(function() {
                         
                         output += `<label class="service-option">
                                     <input type="radio" name="shipping_service" value="${serviceName}" data-cost="${cost}">
-                                    ${serviceName} - Rp ${formattedCost} (${etd})
+                                    ${serviceName} - Rp ${formattedCost} (${etd} days)
                                 </label><br>`;
                     });
                 } else {
-                     let errorMsg = 'Layanan tidak tersedia untuk kurir/tujuan ini.';
+                     let errorMsg = 'Service not available for this route.';
                      if(response.meta && response.meta.message) {
                          errorMsg = `Error: ${response.meta.message}`;
                      }
@@ -560,7 +550,7 @@ $(document).ready(function() {
                 }
                 $('#cost_options').html(output);
             }, 'json').fail(function() {
-                 $('#cost_options').html('<div class="alert-error">Error: Gagal terhubung ke server API.</div>');
+                 $('#cost_options').html('<div class="alert-error">Error: Connection failed.</div>');
             });
         } else {
             resetShipping();
@@ -568,21 +558,16 @@ $(document).ready(function() {
     }
     
     // --- 4. PEMICU (TRIGGER) KALKULASI ---
-    // Pemicu baru saat kecamatan di alamat baru dipilih
     $('#district_select').change(function() {
         const district_id = $(this).val();
         const district_name = $(this).find('option:selected').data('name');
         $('#sub_district_text').val(district_name || '');
         
-        // Langsung hitung ongkir
         calculateShippingCost();
     });
 
-    // Pemicu lama (kurir dan pilihan alamat)
-    $('#courier_select').change(calculateShippingCost); // Hapus trigger 'address_choice' dari sini
+    $('#courier_select').change(calculateShippingCost);
 
-
-    // --- 5. FUNGSI FINAL: UPDATE TOTAL HARGA ---
     $('#cost_options').on('change', 'input[name="shipping_service"]', function() {
         const cost = parseInt($(this).data('cost'));
         const serviceName = $(this).val();
@@ -591,19 +576,16 @@ $(document).ready(function() {
         
         $('#hidden_shipping_cost').val(cost);
         $('#hidden_shipping_service').val(serviceName);
-        $('#place_order_button').prop('disabled', false); // Aktifkan tombol checkout
+        $('#place_order_button').prop('disabled', false);
     });
 
-    // --- PANGGIL FUNGSI SAAT HALAMAN DIMUAT (JIKA ADA ALAMAT TERSIMPAN) ---
     if ($('input[name="address_choice"]:checked').val() === 'saved') {
-        // Panggil setelah 1 detik untuk memberi waktu dropdown Select2 ter-render
         setTimeout(calculateShippingCost, 1000);
     }
 });
 </script>
 <?php 
 if ($is_midtrans_processing): 
-// --- JAVASCRIPT MIDTRANS ---
 ?>
     <script type="text/javascript"
         src="https://app.sandbox.midtrans.com/snap/snap.js"

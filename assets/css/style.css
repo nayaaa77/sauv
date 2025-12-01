@@ -2963,7 +2963,7 @@ html, body {
   .tawk-min-container,
   div[id*="tawk-"],   /* Target ID apapun yang mengandung 'tawk-' */
   iframe[title*="chat"] {
-      bottom: 90px !important; /* Paksa naik 90px */
+      bottom: 10px !important; /* Paksa naik 90px */
       margin-bottom: 0 !important;
       z-index: 9998 !important; /* Di bawah alert, tapi di atas konten */
   }
@@ -2999,7 +2999,7 @@ html, body {
   .cart-actions { display: none !important; }
   
   /* 2. Buat ruang kosong di bawah halaman biar konten terbawah tidak tertutup tombol melayang */
-  .container { padding-bottom: 150px; }
+  .container { padding-bottom: 20px !important; /* PERBAIKAN: Dulu 150px, sekarang 20px */ }
 
   /* 3. Footer Melayang (Sticky Bottom) */
   .mobile-sticky-footer {
@@ -3148,7 +3148,8 @@ html, body {
   .site-footer {
       height: auto !important;
       padding-top: 30px !important;
-      padding-bottom: 90px !important; /* Ruang untuk menu bawah */
+      /* padding-bottom: 90px !important; Ruang untuk menu bawah */
+      margin-top: -15px !important; /* TARIK NAIK FOOTER */
   }
 
   /* PENTING: Matikan padding container khusus di dalam footer */
@@ -3161,7 +3162,7 @@ html, body {
   /* Ganti .container dengan selector yang lebih spesifik */
   .main-content, 
   .page-content { 
-      padding-bottom: 150px !important; /* Ruang kosong pindah kesini */
+      padding-bottom: 20px !important; /* PERBAIKAN: Dulu 150px, sekarang 20px */
   }
 
   /* 3. Logic Sticky Footer & Lainnya tetap sama... */
@@ -3228,6 +3229,130 @@ html, body {
   .cart-actions .btn-secondary {
       background: #fff;
       border: 1px solid #ddd;
+      color: #555;
+  }
+}
+
+/* ============================================================
+   FIX FINAL: TAMPILAN MOBILE (JARAK PAS & RAPI)
+   Letakkan kode ini di BARIS PALING BAWAH file style.css
+   (Kode ini akan menimpa pengaturan jarak sebelumnya)
+============================================================ */
+
+@media (max-width: 768px) {
+
+  /* --- 1. HEADER & CONTAINER (Normal, Tidak Terlalu Tipis) --- */
+  .site-header {
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+      border-bottom: 1px solid #f0f0f0 !important;
+      height: auto !important;
+  }
+  
+  .site-header .container {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      min-height: 0 !important;
+  }
+
+  .container {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important; /* Reset padding aneh */
+  }
+
+  /* --- 2. JARAK ANTAR BAGIAN (INDEX PAGE) --- */
+  
+  /* Beri jarak antara Banner Utama dengan Produk di bawahnya */
+  .hero-banner-section {
+      margin-bottom: 25px !important; /* Jarak napas yang pas */
+      margin-top: 0 !important;
+  }
+  
+  /* Bagian Produk Terbaru */
+  .latest-products-section {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+      margin-bottom: 30px !important;
+  }
+
+  /* Judul Section (misal: "Shop The Latest") */
+  .section-header {
+      margin-bottom: 20px !important;
+      padding-bottom: 0 !important;
+      border-bottom: none !important;
+  }
+
+  /* Styling Judul Halaman (H1/H2) */
+  h1, h2, 
+  .section-header h2,
+  .hero-banner-title {
+      margin-top: 15px !important;    /* Jarak atas judul */
+      margin-bottom: 15px !important; /* Jarak bawah judul */
+      line-height: 1.3 !important;
+      font-size: 1.6rem !important;   /* Ukuran font pas di HP */
+  }
+
+  /* --- 3. KONTEN UTAMA & FOOTER --- */
+
+  /* Area Konten Utama */
+  .page-content, 
+  .main-content {
+      margin-top: 0 !important;
+      padding-top: 10px !important;
+      padding-bottom: 40px !important; /* Jarak sebelum footer dimulai */
+  }
+
+  /* Footer */
+  .site-footer {
+      margin-top: 0 !important;
+      padding-top: 20px !important;    /* Jarak isi footer dari garis atasnya */
+      padding-bottom: 80px !important; /* Ruang untuk menu bawah (jika ada) */
+  }
+  
+  /* Reset container di dalam footer agar tidak double spacing */
+  .site-footer .container {
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+  }
+
+  /* --- 4. PERBAIKAN CART & CHECKOUT (Agar Rapi) --- */
+  
+  /* Order Summary (Kotak Total) */
+  .order-summary {
+      margin-top: 30px;
+      background: #fdfdfd;
+      padding: 20px;
+      border-top: 1px solid #eee;
+  }
+
+  /* Tombol Aksi (Checkout/Update) */
+  .cart-actions {
+      display: flex !important;
+      flex-direction: column-reverse; /* Tombol Checkout di atas */
+      gap: 15px;
+      margin-top: 20px;
+  }
+
+  .cart-actions .btn, 
+  .cart-actions .btn-secondary {
+      width: 100%;
+      display: block;
+      text-align: center;
+      padding: 15px;
+      border-radius: 4px;
+  }
+
+  /* Warna Tombol */
+  .cart-actions .btn {
+      order: 2; 
+      background: #000; 
+      color: #fff;
+  }
+  .cart-actions .btn-secondary {
+      order: 1; 
+      background: #fff; 
+      border: 1px solid #ddd; 
       color: #555;
   }
 }

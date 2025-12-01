@@ -60,6 +60,13 @@ $stmt_items->close();
 
 <div class="container order-detail-container">
     
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; margin-top: 20px;">
+        <h1 style="margin: 0; font-size: 1.8rem;">Order #<?php echo $order['id']; ?></h1>
+        
+        <a href="my_account.php?page=orders" title="Close" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; color: #333; text-decoration: none; transition: background 0.3s;">
+            <i class="fas fa-times" style="font-size: 18px;"></i>
+        </a>
+    </div>
     <?php if ($show_confirmation_message): ?>
     <div class="notification brand" id="order-notification">
         <i class="fas fa-check-circle"></i>
@@ -140,9 +147,7 @@ $stmt_items->close();
             </div>
         </div>
     </div>
-    <div class="back-to-orders">
-        <a href="my_account.php?page=orders">← Back to My Orders</a>
+    
     </div>
-</div>
 
 <?php include 'includes/footer.php'; ?>
