@@ -4,7 +4,7 @@
 
 /* Reset & Variabel */
 :root {
-    --primary-color: #007bff; /* Warna utama diubah menjadi biru */
+    --primary-color: #007bff; 
     --sidebar-bg: #3D2B1F;
     --bg-color: #FBF9F1;
     --dark-color: #212529;
@@ -483,7 +483,7 @@ a {
     color: var(--grey-color);
 }
 
-/* --- PERUBAHAN PADA TOMBOL --- */
+/* --- TOMBOL --- */
 .btn {
     padding: 8px 15px;
     border: none;
@@ -497,7 +497,7 @@ a {
     text-align: center;
     transition: all 0.2s ease;
     box-shadow: none;
-    border-radius: 50px; /* Diubah menjadi bentuk oval/kapsul */
+    border-radius: 50px;
 }
 
 .btn-primary {
@@ -508,15 +508,14 @@ a {
 }
 
 .btn-primary:hover {
-    background-color: #0056b3; /* Warna hover digelapkan */
+    background-color: #0056b3;
     color: var(--white-color);
     box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
     transform: translateY(-2px);
 }
-/* --- AKHIR PERUBAHAN --- */
 
 /* =================================
-   FORM LAYOUT & STYLING BARU
+   FORM LAYOUT & STYLING 
    ================================= */
 .form-grid {
     display: flex;
@@ -622,15 +621,16 @@ a {
     margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px; 
 }
 
+/* PERBAIKAN: overflow: visible agar tombol "X" tidak terpotong */
 .image-preview-item {
     position: relative;
     width: 100px;
     height: 100px;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible; 
     border: 1px solid var(--border-color);
 }
 
@@ -638,6 +638,7 @@ a {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 8px;
 }
 
 /* --- Toggle Switch --- */
@@ -647,47 +648,47 @@ a {
     align-items: center;
 }
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
 }
 .switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
 }
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
 }
 input:checked + .slider {
-  background-color: var(--primary-color);
+    background-color: var(--primary-color);
 }
 input:checked + .slider:before {
-  transform: translateX(22px);
+    transform: translateX(22px);
 }
 .slider.round {
-  border-radius: 34px;
+    border-radius: 34px;
 }
 .slider.round:before {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 .btn-block {
@@ -699,60 +700,65 @@ input:checked + .slider:before {
     font-size: 16px;
 }
 
-/* Menggunakan kembali style Summernote dari Bootstrap */
 .note-editor.note-frame {
     border: 1px solid #ced4da;
     box-shadow: none;
 }
 
 /* =================================
-   EDIT PRODUCT PAGE STYLING
+   EDIT PRODUCT PAGE STYLING (FIXED)
    ================================= */
 .image-preview-item.existing {
     position: relative;
 }
 
+/* PERBAIKAN: Posisi dan Z-index tombol X agar terlihat melayang di pojok */
 .delete-image-label {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #dc3545;
+    top: -10px;
+    right: -10px;
+    background-color: var(--danger-color);
     color: white;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     transition: transform 0.2s;
+    z-index: 10; 
 }
 
 .delete-image-label:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
+    background-color: #bd2130;
 }
 
 .delete-image-label input[type="checkbox"] {
-    display: none; /* Sembunyikan checkbox asli */
+    display: none; 
 }
 
-/* Ubah tampilan saat checkbox dicentang */
-.delete-image-label input[type="checkbox"]:checked + i {
-    display: none; /* Sembunyikan ikon 'x' */
-}
+/* Logika visual saat checkbox dicentang */
 .image-preview-item.existing input[type="checkbox"]:checked ~ img {
-    opacity: 0.3; /* Buat gambar menjadi transparan */
+    opacity: 0.3; 
+    filter: grayscale(100%);
 }
+
+.image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label {
+    background-color: #28a745; 
+}
+
+.image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label i {
+    display: none; 
+}
+
 .image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label::after {
-    content: '\f00c'; /* Kode ikon centang Font Awesome */
+    content: '\f00c'; 
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
-    color: white;
-}
-.image-preview-item.existing input[type="checkbox"]:checked ~ .delete-image-label {
-    background-color: #28a745; /* Ubah background menjadi hijau */
 }
 
 /* =================================
@@ -762,7 +768,7 @@ input:checked + .slider:before {
     padding: 1rem;
     margin-bottom: 1.5rem;
     border: 1px solid transparent;
-    border-radius: .5rem; /* Sudut sedikit membulat */
+    border-radius: .5rem; 
     font-weight: 500;
 }
 
@@ -832,29 +838,14 @@ input:checked + .slider:before {
     box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
 }
 
-.status-pending {
-    background-color: #fff3cd;
-    color: #664d03;
-}
-.status-confirmed {
-    background-color: #cfe2ff;
-    color: #084298;
-}
-.status-shipped {
-    background-color: #d1e7dd;
-    color: #0f5132;
-}
-.status-completed {
-    background-color: #e2e3e5;
-    color: #41464b;
-}
-.status-cancelled {
-    background-color: #f8d7da;
-    color: #842029;
-}
+.status-pending { background-color: #fff3cd; color: #664d03; }
+.status-confirmed { background-color: #cfe2ff; color: #084298; }
+.status-shipped { background-color: #d1e7dd; color: #0f5132; }
+.status-completed { background-color: #e2e3e5; color: #41464b; }
+.status-cancelled { background-color: #f8d7da; color: #842029; }
 
 /* =================================
-   SETTINGS PAGE STYLING
+   SETTINGS PAGE STYLES
    ================================= */
 .settings-container {
     max-width: 800px;
@@ -865,49 +856,4 @@ input:checked + .slider:before {
 
 .settings-container .card .card-body form {
     max-width: 500px;
-}
-
-/* Style dasar untuk semua badge status */
-.status-badge {
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 0.9em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    /* Panah dropdown kustom agar terlihat lebih baik */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20128c3.6%203.6%207.8%205.4%2013%205.4s9.4-1.8%2013-5.4l128-128c3.6-3.6%205.4-7.8%205.4-13%200-4.9-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px;
-    padding-right: 30px; /* Ruang untuk panah */
-}
-
-/* Warna untuk setiap status */
-
-.status-pending {
-    background-color: #fff3cd; /* Kuning muda */
-    color: #664d03;
-}
-
-.status-confirmed {
-    background-color: #cff4fc; /* Biru muda */
-    color: #055160;
-}
-
-.status-shipped {
-    background-color: #dbeafe; /* Biru (primary) */
-    color: #1e40af;
-}
-
-.status-completed {
-    background-color: #d1e7dd; /* Hijau muda */
-    color: #0f5132;
-}
-
-.status-cancelled {
-    background-color: #f8d7da; /* Merah muda */
-    color: #58151c;
 }

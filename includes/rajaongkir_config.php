@@ -11,6 +11,6 @@ define('RAJAONGKIR_ACCOUNT_TYPE', 'starter');
 // 3. Tentukan ID Kota Asal Pengiriman (Toko Anda).
 //    Anda bisa mendapatkan ID kota ini dari dashboard RajaOngkir.
 //    Contoh: '152' adalah ID untuk 'Kota Jakarta Pusat'. Ganti dengan ID kota Anda.
-define('RAJAONGKIR_ORIGIN_CITY_ID', '152'); 
+define('RAJAONGKIR_ORIGIN_CITY_ID', '790'); 
 
 ?>

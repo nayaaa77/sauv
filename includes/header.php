@@ -4,7 +4,22 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'functions.php';
-?>
+include_once 'db_conn.php';
+
+$categories = []; // Siapkan array kosong
+if (isset($conn) && $conn instanceof mysqli) {
+    // Cek apakah koneksi masih terbuka (tidak error)
+    if (!mysqli_connect_errno() && $conn->ping()) {
+        $query_cat = "SELECT * FROM categories ORDER BY name ASC";
+        $result_cat = mysqli_query($conn, $query_cat);
+        if ($result_cat) {
+            while($row = mysqli_fetch_assoc($result_cat)) {
+                $categories[] = $row;
+            }
+        }
+    }
+}
+    ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -38,6 +53,48 @@ require_once 'functions.php';
         .select2-container {
             width: 100% !important; 
         }
+
+        /* Styling Dropdown Navbar (Tambahan untuk menu Shop) */
+        .nav-menu li {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+            z-index: 1000;
+            list-style: none;
+            padding: 10px 0;
+            top: 100%;
+            left: 0;
+            border-radius: 4px;
+        }
+
+        .nav-menu li:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content li a {
+            padding: 10px 20px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content li a:hover {
+            background-color: #f5f5f5;
+            color: #000;
+        }
+
+        .nav-menu a i {
+            margin-left: 5px;
+            font-size: 10px;
+        }
     </style>
 </head>
 <body>
@@ -53,7 +110,21 @@ require_once 'functions.php';
                 </button>
 
                 <ul class="nav-menu" id="navMenu">
-                    <li><a href="shop.php">Shop</a></li>
+                    <li class="dropdown">
+                        <a href="shop.php">Shop <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-content">
+                            <li><a href="shop.php">Semua Produk</a></li>
+                            <?php if ($result_cat && mysqli_num_rows($result_cat) > 0): ?>
+                                <?php while($cat = mysqli_fetch_assoc($result_cat)): ?>
+                                    <li>
+                                        <a href="shop.php?category=<?php echo $cat['id']; ?>">
+                                            <?php echo htmlspecialchars($cat['name']); ?>
+                                        </a>
+                                    </li>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
                     <li><a href="blog.php">Blog</a></li>
                     <li><a href="our_story.php">Our Story</a></li>
                 </ul>
@@ -90,4 +161,4 @@ require_once 'functions.php';
             </nav>
         </div>
     </header>
-    <main class="main-content">
+    <main class="main-content"> 

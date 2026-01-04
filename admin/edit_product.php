@@ -1,36 +1,41 @@
 <?php
 session_start();
-// Pastikan hanya admin yang bisa akses dan ada ID produk
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    die("Access Denied.");
-}
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') { die("Access Denied."); }
 require_once '../includes/db_conn.php';
 
-// 1. Ambil ID Produk dari URL
 $product_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($product_id === 0) {
-    die("Error: Product ID not specified.");
-}
+if ($product_id === 0) { die("Error: Product ID not specified."); }
 
-// 2. Ambil data produk utama
 $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
 $stmt->bind_param("i", $product_id);
 $stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
-    die("Error: Product not found.");
-}
-$product = $result->fetch_assoc();
+$product = $stmt->get_result()->fetch_assoc();
+if (!$product) { die("Error: Product not found."); }
 $stmt->close();
 
-// 3. Ambil data gambar galeri
 $stmt_gallery = $conn->prepare("SELECT id, image_url FROM product_images WHERE product_id = ?");
 $stmt_gallery->bind_param("i", $product_id);
 $stmt_gallery->execute();
 $gallery_images = $stmt_gallery->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt_gallery->close();
 
-// Sertakan header admin
+$categories_res = $conn->query("SELECT * FROM categories ORDER BY name ASC");
+
+// ==========================================
+// SOLUSI PATH ABSOLUT & ANTI-CACHE
+// ==========================================
+$main_img_name = htmlspecialchars($product['image_url']);
+
+// Path untuk Browser (Tampilan) - Menggunakan /sauv/assets/img/ agar pasti dari root
+// Tambahkan ?v=time() agar browser selalu ambil gambar terbaru (bukan cache)
+$display_src = "/sauv/assets/img/" . str_replace([' ', '#'], ['%20', '%23'], $main_img_name) . "?v=" . time();
+
+// Jika nama file kosong/default, arahkan ke default
+if (empty($main_img_name) || $main_img_name == 'default.jpg') {
+    $display_src = "/sauv/assets/img/default.jpg";
+}
+// ==========================================
+
 $page_title = "Edit Product";
 include 'includes/header_admin.php'; 
 ?>
@@ -44,13 +49,26 @@ include 'includes/header_admin.php';
     <div class="form-grid">
         <div class="form-column-main">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Product Details</h4>
-                </div>
+                <div class="card-header"><h4 class="card-title">Product Details</h4></div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Product Name</label>
                         <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_id">Category</label>
+                        <select name="category_id" id="category_id" class="form-control">
+                            <option value="">-- Select Existing Category --</option>
+                            <?php 
+                            if ($categories_res->num_rows > 0) {
+                                while($cat = $categories_res->fetch_assoc()) {
+                                    $selected = ($product['category_id'] == $cat['id']) ? 'selected' : '';
+                                    echo "<option value='".$cat['id']."' $selected>".htmlspecialchars($cat['name'])."</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                        <input type="text" class="form-control mt-2" name="new_category" placeholder="Or type NEW Category name here..." style="margin-top: 10px;">
                     </div>
                     <div class="form-group">
                         <label for="description-editor">Description</label>
@@ -66,9 +84,7 @@ include 'includes/header_admin.php';
 
         <div class="form-column-side">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Pricing & Stock</h4>
-                </div>
+                <div class="card-header"><h4 class="card-title">Pricing & Stock</h4></div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="price">Price (Rp)</label>
@@ -82,22 +98,19 @@ include 'includes/header_admin.php';
             </div>
 
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Product Images</h4>
-                </div>
+                <div class="card-header"><h4 class="card-title">Product Images</h4></div>
                 <div class="card-body">
                     <div class="form-group">
                         <label>Main Product Image (Cover)</label>
                         <div class="image-upload-box" id="main-image-box">
                             <input type="file" id="main_image" name="main_image" accept="image/*">
-                            <div class="upload-placeholder" style="display: none;">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Click or drag image here</p>
-                            </div>
+                            <div class="upload-placeholder"><i class="fas fa-cloud-upload-alt"></i></div>
                         </div>
                         <div class="image-preview-container" id="main-image-preview-container">
-                            <div class="image-preview-item">
-                                <img src="../assets/img/<?php echo htmlspecialchars($product['image_url']); ?>" alt="Current Main Image">
+                            <div class="image-preview-item existing">
+                                <input type="checkbox" id="del_main" name="delete_main_image" value="1" style="display:none;">
+                                <img src="<?php echo $display_src; ?>" alt="Main Image" onerror="this.src='/sauv/assets/img/default.jpg';">
+                                <label for="del_main" class="delete-image-label"><i class="fas fa-times"></i></label>
                             </div>
                         </div>
                     </div>
@@ -106,19 +119,17 @@ include 'includes/header_admin.php';
                         <label>Gallery Images</label>
                         <div class="image-upload-box" id="gallery-image-box">
                             <input type="file" id="gallery_images" name="gallery_images[]" accept="image/*" multiple>
-                             <div class="upload-placeholder">
-                                <i class="fas fa-images"></i>
-                                <p>Add more images</p>
-                            </div>
+                             <div class="upload-placeholder"><i class="fas fa-images"></i><p>Add more images</p></div>
                         </div>
                         <div class="image-preview-container gallery" id="gallery-preview-container">
-                            <?php foreach ($gallery_images as $image): ?>
+                            <?php foreach ($gallery_images as $image): 
+                                // Sama, pakai absolute path + anti cache
+                                $g_src = "/sauv/assets/img/" . str_replace([' ', '#'], ['%20', '%23'], $image['image_url']) . "?v=" . time();
+                            ?>
                                 <div class="image-preview-item existing">
-                                    <img src="../assets/img/<?php echo htmlspecialchars($image['image_url']); ?>" alt="Gallery Image">
-                                    <label class="delete-image-label">
-                                        <input type="checkbox" name="delete_gallery_images[]" value="<?php echo $image['id']; ?>">
-                                        <i class="fas fa-times"></i>
-                                    </label>
+                                    <input type="checkbox" id="del_gal_<?php echo $image['id']; ?>" name="delete_gallery_images[]" value="<?php echo $image['id']; ?>" style="display:none;">
+                                    <img src="<?php echo $g_src; ?>" alt="Gallery Image" onerror="this.src='/sauv/assets/img/default.jpg';">
+                                    <label for="del_gal_<?php echo $image['id']; ?>" class="delete-image-label"><i class="fas fa-times"></i></label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -127,9 +138,7 @@ include 'includes/header_admin.php';
             </div>
             
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Visibility</h4>
-                </div>
+                <div class="card-header"><h4 class="card-title">Visibility</h4></div>
                 <div class="card-body">
                     <div class="form-group-switch">
                         <label for="is_featured">Feature on Hero Banner?</label>
@@ -150,58 +159,25 @@ include 'includes/header_admin.php';
 
 <script>
 $(document).ready(function() {
-    // Inisialisasi Summernote Editor
     $('#description-editor, #info-editor').summernote({
-        placeholder: 'Write your content here...',
-        tabsize: 2,
-        height: 150,
-        toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['view', ['codeview']]
-        ]
+        placeholder: 'Content...', tabsize: 2, height: 150,
+        toolbar: [['style', ['bold', 'italic', 'underline', 'clear']], ['para', ['ul', 'ol', 'paragraph']], ['view', ['codeview']]]
     });
 
-    // Fungsi untuk preview gambar
     function handleImagePreview(input, previewContainer) {
         if (input.files && input.files[0]) {
-            $(previewContainer).empty(); // Kosongkan preview lama
+            $(previewContainer).empty(); 
             $(input).closest('.image-upload-box').find('.upload-placeholder').hide();
-            
             Array.from(input.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const previewItem = `<div class="image-preview-item"><img src="${e.target.result}"></div>`;
-                    $(previewContainer).append(previewItem);
+                    $(previewContainer).append(`<div class="image-preview-item"><img src="${e.target.result}"></div>`);
                 }
                 reader.readAsDataURL(file);
             });
         }
     }
-    
-    // Fungsi untuk preview gambar galeri (menambahkan, bukan mengganti)
-    function handleGalleryPreview(input, previewContainer) {
-        if (input.files) {
-            Array.from(input.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Item baru tidak punya checkbox delete
-                    const previewItem = `<div class="image-preview-item new"><img src="${e.target.result}"></div>`;
-                    $(previewContainer).append(previewItem);
-                }
-                reader.readAsDataURL(file);
-            });
-        }
-    }
-
-    // Event listener untuk input gambar utama
-    $('#main_image').on('change', function() {
-        handleImagePreview(this, '#main-image-preview-container');
-    });
-
-    // Event listener untuk input gambar galeri
-    $('#gallery_images').on('change', function() {
-        handleGalleryPreview(this, '#gallery-preview-container');
-    });
+    $('#main_image').on('change', function() { handleImagePreview(this, '#main-image-preview-container', false); });
+    $('#gallery_images').on('change', function() { handleImagePreview(this, '#gallery-preview-container', true); });
 });
 </script>

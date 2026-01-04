@@ -1,8 +1,9 @@
 <?php 
-$page_title = "Manage Products"; // Judul ini akan ditampilkan di header utama
+$page_title = "Manage Products"; 
 include 'includes/header_admin.php'; 
+require_once '../includes/db_conn.php'; // Pastikan koneksi database ada
 
-// Menghitung jumlah total produk untuk ditampilkan di judul
+// Menghitung jumlah total produk
 $count_result = $conn->query("SELECT COUNT(id) as total FROM products");
 $product_count = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 ?>
@@ -10,7 +11,7 @@ $product_count = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 <script>document.querySelector('.header-title').textContent = '<?php echo $page_title; ?>';</script>
 
 <?php
-// AWAL KODE YANG DIPERBARUI: Blok untuk menampilkan notifikasi dalam Bahasa Inggris
+// Blok Notifikasi
 if (isset($_GET['status'])) {
     $message = '';
     if ($_GET['status'] == 'add_success') {
@@ -25,7 +26,6 @@ if (isset($_GET['status'])) {
         echo "<div class='alert alert-success'>{$message}</div>";
     }
 }
-// AKHIR KODE YANG DIPERBARUI
 ?>
 
 <div class="content-wrapper-card">
@@ -41,25 +41,64 @@ if (isset($_GET['status'])) {
                     <th>#</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Price</th>
+                    <th>Category</th> <th>Price</th>
                     <th>Stock</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $result = $conn->query("SELECT * FROM products ORDER BY id DESC");
+                // Query diperbarui dengan LEFT JOIN untuk mengambil nama kategori
+                $sql = "SELECT p.*, c.name as category_name 
+                        FROM products p 
+                        LEFT JOIN categories c ON p.category_id = c.id 
+                        ORDER BY p.id DESC";
+                $result = $conn->query($sql);
+
                 if ($result && $result->num_rows > 0):
-                    
-                    $nomor = 1; // 1. BARIS BARU: Inisialisasi penghitung
-                    
+                    $nomor = 1; 
                     while ($row = $result->fetch_assoc()):
+                        
+                        // --- LOGIKA PERBAIKAN GAMBAR (Sama seperti Shop & Edit) ---
+                        $img_filename = $row['image_url'];
+                        $img_path_raw = '../assets/img/' . $img_filename; // Default folder
+                        
+                        // Cek apakah ada di uploads (folder lama)
+                        if (!file_exists($img_path_raw) && file_exists('../uploads/' . $img_filename)) {
+                            $img_path_raw = '../uploads/' . $img_filename;
+                        }
+                        
+                        // Encode URL agar spasi dan # terbaca browser
+                        $img_display = str_replace([' ', '#'], ['%20', '%23'], $img_path_raw);
+                        // -----------------------------------------------------------
                 ?>
                 <tr>
-                    <td><?php echo $nomor; ?></td> <td><img src="../assets/img/<?php echo htmlspecialchars($row['image_url']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>"></td>
-                    <td><?php echo htmlspecialchars($row['name']); ?></td>
+                    <td><?php echo $nomor; ?></td> 
+                    <td>
+                        <img src="<?php echo $img_display; ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    </td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($row['name']); ?></strong>
+                        <?php if($row['is_featured']): ?>
+                            <span style="font-size: 10px; background: #e3f2fd; color: #0d47a1; padding: 2px 5px; border-radius: 3px; margin-left: 5px;">Featured</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php 
+                        // Tampilkan nama kategori atau 'Uncategorized' jika kosong
+                        echo htmlspecialchars($row['category_name'] ?? 'Uncategorized'); 
+                        ?>
+                    </td>
                     <td>Rp <?php echo number_format($row['price']); ?></td>
-                    <td><?php echo $row['stock']; ?></td>
+                    <td>
+                        <?php 
+                        if ($row['stock'] <= 0) {
+                            echo '<span style="color:red; font-weight:bold;">Out of Stock</span>';
+                        } else {
+                            echo $row['stock'];
+                        }
+                        ?>
+                    </td>
                     <td class="actions">
                         <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="action-icon" title="Edit"><i class="fas fa-pen"></i></a>
                         <form action="process_product.php" method="POST" style="display:inline; margin:0;">
@@ -69,12 +108,12 @@ if (isset($_GET['status'])) {
                     </td>
                 </tr>
                 <?php
-                    $nomor++; // 3. BARIS BARU: Tambahkan 1 ke penghitung setiap loop
+                    $nomor++;
                     endwhile;
                 else:
                 ?>
                 <tr>
-                    <td colspan="6" class="no-data">No products found.</td>
+                    <td colspan="7" class="no-data">No products found.</td>
                 </tr>
                 <?php endif; ?>
             </tbody>
