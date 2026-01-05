@@ -150,8 +150,11 @@ if ($page === 'orders') {
     $orders = $stmt_orders->get_result()->fetch_all(MYSQLI_ASSOC);
     $stmt_orders->close();
 }
-$conn->close();
+
+// --- PERBAIKAN: JANGAN TUTUP KONEKSI DISINI ---
+// $conn->close();  <-- Baris ini dihapus agar header.php bisa pakai $conn
 ?>
+
 <?php include 'includes/header.php'; ?>
 
 <div class="container account-container">
